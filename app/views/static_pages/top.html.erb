@@ -1,4 +1,6 @@
-<% provide(:title, "") %>
-    <h1>勤怠管理システム</h1>
-    <button class="btn btn-info">ログイン</button>
-    <p>アカウント作成はコチラから</p>
+<% provide(:title, "Top") %>
+<div class = "center jumboton">
+  <h1>勤怠管理システム</h1>
+  <%= link_to "ログイン", "#", class: "btn btn-lg btn-primary" %>
+  <p>アカウント作成は<%= link_to "こちら", '#' %>から</p>
+</div>
