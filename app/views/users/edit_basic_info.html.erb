@@ -10,10 +10,10 @@
       <%= render 'shared/error_messages', object: @user %>
      
       <%= f.label :basic_time, class: "label-#{yield(:class_text)}" %>
-      <%= f.text_field :basic_time, class: "form-control" %>
+      <%= f.time_field :basic_time, class: "form-control" %>
      
       <%= f.label :work_time, class: "label-#{yield(:class_text)}" %>
-      <%= f.text_field :work_time, class: "form-control" %>
+      <%= f.time_field :work_time, class: "form-control" %>
      
      <%= f.submit "#{yield(:button_text)}", class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
     
