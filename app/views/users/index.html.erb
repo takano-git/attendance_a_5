@@ -12,14 +12,17 @@
     
     <% @users.each do |user| %>
       <tr>
-        <td><%= link_to user.name, user %></td>
-        <td>
-          <% if current_user.admin && !current_user?(user) %>
-            <%= link_to "削除", user, method: :delete,
-                data: { confirm: "削除してよろしいですか？" },
-                class: "btn btn-danger" %>
-          <% end %>
+        <td><%= link_to user.name, user %>
+            <% if current_user.admin %>
+               | <%= link_to "基本情報設定", edit_basic_info_user_path(user) %>
+            <% end %>
+            <% if current_user.admin && !current_user?(user) %>
+               | <%= link_to "削除", user, method: :delete,
+                data: { confirm: "削除してよろしいですか？" } %>
+            <% end %>
         </td>
+        <td></td>
+        <td></td>
       </tr>
     <% end %>
   </table>
