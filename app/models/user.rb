@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  # 一対多の関係を記述, ユーザーが削除された場合関連する勤怠データも自動で削除される設定
+  has_many :attendances, dependent: :destroy
+  
   # 「remember_token」という仮想の属性を作成します。
   attr_accessor :remember_token
   before_save { self.email = email.downcase }
@@ -14,7 +17,7 @@ class User < ApplicationRecord
   validates :work_time, presence: true
   has_secure_password
   validates :password, presence: true, length: { minimum: 6 }, allow_nil: true
-  
+
   # 渡された文字列のハッシュ値を返します。
   def User.digest(string)
     cost =

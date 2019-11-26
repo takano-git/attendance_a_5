@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  worked_on: 2019-11-26
+  started_at: 2019-11-26 03:56:59
+  finished_at: 2019-11-26 03:56:59
+  note: MyString
+  overtime_instruction: MyString
+  instructor: MyString
+  user: one
+
+two:
+  worked_on: 2019-11-26
+  started_at: 2019-11-26 03:56:59
+  finished_at: 2019-11-26 03:56:59
+  note: MyString
+  overtime_instruction: MyString
+  instructor: MyString
+  user: two
