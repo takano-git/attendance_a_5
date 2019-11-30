@@ -3,15 +3,13 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
-
+  before_action :set_one_month, only: :show
 
   def index
     @users = User.paginate(page: params[:page])
   end
 
   def show
-    @first_day= Date.current.beginning_of_month
-    @last_day = @first_day.end_of_month
   end
   
   def new
@@ -20,7 +18,7 @@ class UsersController < ApplicationController
   
   def create
     @user= User.new(user_params)
-    if@user.save
+    if @user.save
       log_in @user # 保存成功後、ログインします。
       flash[:success] ='新規作成に成功しました。'
       redirect_to @user
@@ -37,7 +35,6 @@ class UsersController < ApplicationController
       # 更新に成功した場合の処理を記述します
       flash[:success] = 'ユーザー情報を更新しました。'
       redirect_to @user
-      
     else
       render :edit
     end
