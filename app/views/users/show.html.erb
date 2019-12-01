@@ -57,8 +57,8 @@
               <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-default btn-attendance" %>
             <% end %>
           </td>
-          <td></td> 
-          <td></td>
+          <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td> 
+          <td><%= l(day.finished_at, format: :minute) if day.finished_at.present? %></td>
           <td></td>
           <td></td>
           <td></td>
