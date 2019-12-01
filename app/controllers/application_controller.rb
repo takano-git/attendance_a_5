@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
       @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
     end
     
-    rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
+  rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
       flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
       redirect_to root_url
   end

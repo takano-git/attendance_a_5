@@ -52,8 +52,12 @@
           <td><%= $days_of_the_week[day.worked_on.wday] %></td>
           <td></td>
           <td></td>
-          <td></td>
-          <td></td>
+          <td>
+            <% if(Date.current == day.worked_on) && day.started_at.nil? %>
+              <%= link_to "出社", user_attendance_path(@user, day), method: :patch, class: "btn btn-default btn-attendance" %>
+            <% end %>
+          </td>
+          <td></td> 
           <td></td>
           <td></td>
           <td></td>
