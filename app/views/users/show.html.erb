@@ -53,8 +53,8 @@
           <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
           <td><%= l(day.started_at, format: :minute) if day.started_at.present? %></td>
           <td>
-            <% if(Date.current == day.worked_on) && day.started_at.nil? %>
-              <%= link_to "出社", user_attendance_path(@user, day), method: :patch, class: "btn btn-default btn-attendance" %>
+            <% if btn_text = attendance_state(day) %>
+              <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-default btn-attendance" %>
             <% end %>
           </td>
           <td></td> 
