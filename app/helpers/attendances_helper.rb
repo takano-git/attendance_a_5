@@ -1,4 +1,5 @@
 module AttendancesHelper
+  
   def attendance_state(attendance)
     # 受け取ったAttendanceオブジェクトが当日と一致するか評価します。
     # if文は条件式がtrueなら処理を実行し、falseならなにも処理を実行しない。つまりボタンは表示されない。
@@ -9,5 +10,10 @@ module AttendancesHelper
     # どれにも当てはまらなかった場合はfalseを返します。
     # Rubyではメソッドの最後の式のreturnを省略できるようだ。
     false
+  end
+  
+  # 出社と退社時間を受け取り、在社時間を計算して返します。
+  def working_times(start, finish)
+    format("%.2f",((finish - start) / 60) / 60.0)
   end
 end
