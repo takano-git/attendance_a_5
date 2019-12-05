@@ -59,17 +59,28 @@
           </td>
           <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td> 
           <td><%= l(day.finished_at, format: :minute) if day.finished_at.present? %></td>
+          <td></td>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>
-              <%= working_times(day.started_at, day.finished_at) %>
+              <%= str_times =working_times(day.started_at, day.finished_at) %>
+              <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
           </td>
-          <td></td>
           <td></td>
           <td></td>
           <td></td>
         </tr>
       <% end %>
     </tbody>
+    <tfoot>
+      <tr class="active">
+        <td colspan="2"><%=  format("%.2f",format_basic_info(@user.work_time).to_f * @worked_sum) %></td>
+        <td colspan="6"></td>
+        <td><%= format("%.2f", @total_working_times.to_f) %></td>
+        <td></td>
+        <td></td>
+        <td>所属長承認</td>
+      </tr>
+    </tfoot>
   </table>
 </div>
