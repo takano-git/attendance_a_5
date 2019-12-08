@@ -12,7 +12,9 @@ Rails.application.routes.draw do
       get 'edit_basic_info'
       patch 'update_basic_info'
       # users/1/attendances/edit_one_month のurlになる
-      get 'attendances/edit_one_month' 
+      get 'attendances/edit_one_month'
+      # users/1/attendances/update_one_month のurlになる
+      patch 'attendances/update_one_month' 
     end
     resources :attendances, only: :update
   end

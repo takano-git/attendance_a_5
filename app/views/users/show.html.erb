@@ -66,9 +66,9 @@
               <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
             <% end %>
           </td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td><%= day.note %></td>
+          <td><%= day.overtime_instruction %></td>
+          <td><%= day.instructor %></td>
         </tr>
       <% end %>
     </tbody>
