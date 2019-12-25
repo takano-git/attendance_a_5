@@ -7,12 +7,19 @@ class UsersController < ApplicationController
 
   def index
     @users = User.paginate(page: params[:page])
+    # @serches = User.where('name LIKE ?', "%#{params[:word]}%")
+    # @serches = User.where('name LIKE ?', "%今%")
+    
+    # パラメータとして名前か性別を受け取っている場合は絞って検索する
+    if params[:name].present?
+      @searches = @users.get_by_name params[:name]
+    end
   end
 
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
   end
-  
+
   def new
     @user = User.new
   end
@@ -61,7 +68,7 @@ class UsersController < ApplicationController
 
 
   private
-  
+
     def user_params
       params.require(:user).permit(:name, :email, :department,:password, :password_confirmation)
     end

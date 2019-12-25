@@ -51,4 +51,10 @@ class User < ApplicationRecord
   def forget
     update_attribute(:remember_digest, nil)
   end
+  
+  #ユーザー名による絞り込み
+scope :get_by_name, ->(name) {
+where("name like ?", "%#{name}%")
+}
+
 end

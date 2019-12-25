@@ -1,7 +1,20 @@
 <% provide(:title, 'ユーザー一覧') %>
-<h1>ユーザー一覧</h1>
+<% if @searches.present? %>
+  <h1>検索結果</h1>
+<% elsif  @users.present? %>
+  <h1>ユーザー一覧</h1>
+<% end %>
 
 <div class="col-md-10 col-md-offset-1">
+    
+<div>
+<%= form_tag(users_path, method: "get") do %>
+<%= label_tag :name, "名前" %><%= text_field_tag :name, params[:name] %>
+<%= submit_tag "検索" %>
+<% end %>
+</div>
+    
+    
   <%= will_paginate %>
   <table class="table table-condenced table-hover" id="table-users">
     <thead>
@@ -9,7 +22,24 @@
         <th><%= User.human_attribute_name :name %></th>
       </tr>
     </thead>
-    
+
+<% if  @searches.present? %>
+    <%  @searches.each do |user| %>
+      <tr>
+        <td><%= link_to user.name, user %>
+            <% if current_user.admin %>
+               | <%= link_to "基本情報設定", edit_basic_info_user_path(user) %>
+            <% end %>
+            <% if current_user.admin && !current_user?(user) %>
+               | <%= link_to "削除", user, method: :delete,
+                data: { confirm: "削除してよろしいですか？" } %>
+            <% end %>
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
+    <% end %>
+<% elsif @users.present? %>
     <% @users.each do |user| %>
       <tr>
         <td><%= link_to user.name, user %>
@@ -25,6 +55,15 @@
         <td></td>
       </tr>
     <% end %>
+<% end %>
+
+
+
+
+
+
+
+
   </table>
   <%= will_paginate %>
 </div>
