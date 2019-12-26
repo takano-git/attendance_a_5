@@ -2,26 +2,32 @@
 <% if @searches.present? %>
   <h1>検索結果</h1>
 <% elsif  @users.present? %>
-  <h1>ユーザー一覧</h1>
+<h1>ユーザー一覧</h1>
 <% end %>
 
 <div class="col-md-10 col-md-offset-1">
     
-<div>
+<div class="pull-right">
 <%= form_tag(users_path, method: "get") do %>
-<%= label_tag :name, "名前" %><%= text_field_tag :name, params[:name] %>
-<%= submit_tag "検索" %>
-<% end %>
+<%= label_tag :name, "ユーザー名検索" %>
+  <div class="display-block">
+    <%= text_field_tag :name, params[:name] %>
+    <%= submit_tag "検索" %>
+    <% end %> 
+  </div>
 </div>
     
-    
+<% unless @searches.present? %>    
   <%= will_paginate %>
+<% end %>
+
   <table class="table table-condenced table-hover" id="table-users">
     <thead>
       <tr>
         <th><%= User.human_attribute_name :name %></th>
       </tr>
     </thead>
+
 
 <% if  @searches.present? %>
     <%  @searches.each do |user| %>
@@ -65,5 +71,7 @@
 
 
   </table>
+<% unless @searches.present? %>   
   <%= will_paginate %>
+<% end %>
 </div>

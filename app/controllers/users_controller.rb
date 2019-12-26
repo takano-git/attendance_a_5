@@ -7,9 +7,6 @@ class UsersController < ApplicationController
 
   def index
     @users = User.paginate(page: params[:page])
-    # @serches = User.where('name LIKE ?', "%#{params[:word]}%")
-    # @serches = User.where('name LIKE ?', "%今%")
-    
     # パラメータとして名前か性別を受け取っている場合は絞って検索する
     if params[:name].present?
       @searches = @users.get_by_name params[:name]
@@ -34,7 +31,7 @@ class UsersController < ApplicationController
       render :new
     end
   end
-  
+
   def edit
   end
 
@@ -76,4 +73,5 @@ class UsersController < ApplicationController
     def basic_info_params
       params.require(:user).permit(:department, :basic_time, :work_time)
     end
+    
 end
