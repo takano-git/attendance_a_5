@@ -28,8 +28,8 @@
           %>
           <%= f.fields_for "attendances[]", day do |attendance| %>
           <tr>
-            <td><%= l(day.worked_on, format: :short) %></td>
-            <td class="<%= css_class %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
+            <th><strong><%= l(day.worked_on, format: :short) %></strong></th>
+            <th class="<%= css_class %>"><strong><%= $days_of_the_week[day.worked_on.wday] %></strong></th>
             <% if Date.current < day.worked_on %>
               <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
               <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>

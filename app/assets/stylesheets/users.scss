@@ -1,8 +1,12 @@
 /* ユーザー情報テーブル */
 
 .user-table {
-  vertical-align: middle;
-  text-align: center;
+  tr{
+    th{
+      vertical-align: middle;
+      text-align: center;
+    }
+  }
 }
 
 /* ユーザー勤怠情報テーブル */

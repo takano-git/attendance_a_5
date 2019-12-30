@@ -2,26 +2,28 @@
 <div>
   <table class="table table-bordered table-condensed user-table">
     <tr>
-      <td>
-        <%= link_to "←", user_path(date: @first_day.prev_month), class: "btn btn-default" %>
+      <th>
+        <%= link_to "←", user_path(date: @first_day.prev_month), class: "btn btn-info" %>
+        <span>　</span>
         <%= l(@first_day, format: :middle) %>
         時間管理表
-        <%= link_to "→", user_path(date: @first_day.next_month), class: "btn btn-default" %> 
-      </td>
-      <td>指定勤務時間<%= format_basic_info(@user.work_time) %></td>
-      <td>基本時間<%= format_basic_info(@user.basic_time) %></td>
-      <td>初日：<%=l(@first_day, format: :short) %></td>
+        <span>　</span>
+        <%= link_to "→", user_path(date: @first_day.next_month), class: "btn btn-info" %> 
+      </th>
+      <th>指定勤務時間<%= format_basic_info(@user.work_time) %></th>
+      <th>基本時間<%= format_basic_info(@user.basic_time) %></th>
+      <th>初日：<%=l(@first_day, format: :short) %></th>
     </tr>
 
     <tr>
-      <td>所属：<%= @user.department.present? ? @user.department : "未所属" %></td>
-      <td>名前：<%= @user.name %></td>
-      <td>出勤日数：<%= @worked_sum %>日</td>
-      <td>締め：<%= l(@last_day, format: :short) %></td>
+      <th>所属：<%= @user.department.present? ? @user.department : "未所属" %></th>
+      <th>名前：<%= @user.name %></th>
+      <th>出勤日数：<%= @worked_sum %>日</th>
+      <th>締め：<%= l(@last_day, format: :short) %></th>
     </tr>
   </table>
 </div>
-<%= link_to "勤怠の編集",  attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-default" %>
+<%= link_to "勤怠の編集",  attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-info mb-20" %>
 <div>
   <table class="table table-bordered table-striped table-hover" id="table-attendances">
     <thead>
@@ -57,17 +59,17 @@
           end
         %>
         <tr>
-          <td><%= l(day.worked_on, format: :short) %></td>
-          <td class="<%= css_class %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
+          <th><%= l(day.worked_on, format: :short) %></th>
+          <th class="<%= css_class %>"><%= $days_of_the_week[day.worked_on.wday] %></th>
           <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
-          <td><%= l(day.started_at, format: :minute) if day.started_at.present? %></td>
+          <td><%= format_minute_per_fifteen(day.started_at) if day.started_at.present? %></td>
           <td>
             <% if btn_text = attendance_state(day) %>
               <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-default btn-attendance" %>
             <% end %>
           </td>
           <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td> 
-          <td><%= l(day.finished_at, format: :minute) if day.finished_at.present? %></td>
+          <td><%= format_minute_per_fifteen(day.finished_at) if day.finished_at.present? %></td>
           <td></td>
           <td>
             <% if day.started_at.present? && day.finished_at.present? %>
@@ -83,12 +85,12 @@
     </tbody>
     <tfoot>
       <tr class="active">
-        <td colspan="2"><%=  format("%.2f",format_basic_info(@user.work_time).to_f * @worked_sum) %></td>
-        <td colspan="6"></td>
-        <td><%= format("%.2f", @total_working_times.to_f) %></td>
+        <th colspan="2"><%=  format("%.2f",format_basic_info(@user.work_time).to_f * @worked_sum) %></th>
+        <th colspan="6"></th>
+        <th><%= format("%.2f", @total_working_times.to_f) %></th>
         <td></td>
         <td></td>
-        <td>所属長承認</td>
+        <th>所属長承認</th>
       </tr>
     </tfoot>
   </table>

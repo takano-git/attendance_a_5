@@ -1,8 +1,9 @@
-<% provide(:title, 'ユーザー一覧') %>
 <% if @searches.present? %>
+  <% provide(:title, '検索結果') %>
   <h1>検索結果</h1>
 <% elsif  @users.present? %>
-<h1>ユーザー一覧</h1>
+  <% provide(:title, 'ユーザー一覧') %>
+  <h1>ユーザー一覧</h1>
 <% end %>
 
 <div class="col-md-10 col-md-offset-1">
@@ -11,8 +12,7 @@
 <%= form_tag(users_path, method: "get") do %>
 <%= label_tag :name, "ユーザー名検索" %>
   <div class="display-block">
-    <%= text_field_tag :name, params[:name] %>
-    <%= submit_tag "検索" %>
+    <%= text_field_tag :name, params[:name] %><%= submit_tag "検索", :class=>"btn btn-info" %>
     <% end %> 
   </div>
 </div>
