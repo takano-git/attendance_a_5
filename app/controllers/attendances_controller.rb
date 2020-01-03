@@ -6,6 +6,7 @@ class AttendancesController < ApplicationController
   
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   
+  # 出社/退社登録ボタンの機能
   def update
     @user = User.find(params[:user_id])
     @attendance = Attendance.find(params[:id])
@@ -29,11 +30,21 @@ class AttendancesController < ApplicationController
   def edit_one_month
   end
   
+  # まとめて更新機能
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
-        attendance.update_attributes!(item)
+        if item[:started_at].present? && item[:finished_at].blank?
+          flash[:danger] = "出社時間と退社時間を入力してください"
+          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+        # elsif
+        #   attendance[:finished_at].present? && item[:finished_at].nil?
+        #   flash[:danger] = "退社時間を入力してください"
+        #   redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
+        else
+          attendance.update_attributes!(item)
+        end
       end
     end
     flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
