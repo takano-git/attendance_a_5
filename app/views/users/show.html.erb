@@ -20,7 +20,7 @@
       <th>所属：<%= @user.department.present? ? @user.department : "未所属" %></th>
       <th>名前：<%= @user.name %></th>
       <th>コード</th>
-      <th>9784</th>
+      <th>　</th>
       <th>出勤日数：<%= @worked_sum %>日</th>
       <th>締め：<%= l(@last_day, format: :short) %></th>
     </tr>
@@ -67,6 +67,7 @@
           <th class="<%= css_class %>"><%= $days_of_the_week[day.worked_on.wday] %></th>
           <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
           <td><%= format_minute_per_fifteen(day.started_at) if day.started_at.present? %></td>
+          <!--<td><%= day.started_at.min if day.started_at.present? %></td>-->
           <td>
             <% if btn_text = attendance_state(day) %>
               <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>

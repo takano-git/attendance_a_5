@@ -1,3 +1,4 @@
+require 'rounding'
 module AttendancesHelper
   
   def attendance_state(attendance)
@@ -14,11 +15,12 @@ module AttendancesHelper
   
   # 出社と退社時間を受け取り、在社時間を計算して返します。
   def working_times(start, finish)
-    format("%.2f",(((finish.ceil_to(15.minutes) - start.ceil_to(15.minutes)) / 60) / 60.0))
+    format("%.2f",(((finish.floor_to(15.minutes) - start.floor_to(15.minutes)) / 60) / 60.0))
   end
   
   # 勤怠時間を受け取り15分単位で切捨てて表示します
   def format_minute_per_fifteen(time)
-    (time.ceil_to(15.minutes)).min
+    # 詳しい使い方はここを参照　https://github.com/brianhempel/rounding/blob/master/README.md
+    (time.floor_to(15.minutes)).min
   end  
 end
