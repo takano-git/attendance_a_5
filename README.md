@@ -6,4 +6,3 @@
 * AWS Cloud9
 * Ruby
 * Rails
-* Git HTTPからSSH通信へ変更
