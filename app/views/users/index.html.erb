@@ -1,10 +1,16 @@
-<% if @searches.present? %>
-  <% provide(:title, '検索結果') %>
-  <h1>検索結果</h1>
-<% elsif  @users.present? %>
-  <% provide(:title, 'ユーザー一覧') %>
-  <h1>ユーザー一覧</h1>
-<% end %>
+<% provide(:title, "ユーザー一覧") %>
+<% provide(:class_text, 'user--edit') %>
+<% provide(:button_text, '編集する') %>
+<h1>ユーザー一覧</h1>
+<div class="row">
+  <div class="col-md-4">
+	<%= form_tag import_users_path, multipart: true do %>
+	  <%= file_field_tag :file %>
+	  <%= submit_tag "CSVをインポート", class: "btn btn-primary btn-block"  %>
+	<% end %>
+  </div>
+</div>
+
 
 <div class="col-md-10 col-md-offset-1">
     
