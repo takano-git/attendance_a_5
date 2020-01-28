@@ -1,4 +1,4 @@
-<%= form_with(model: user, local:true) do |f| %>
+<%= form_with(model: user, url: update_basic_info_user_path(user), local: true) do |f| %>
 
 <% if user.errors.any? %>
   <div id="error_explanation">
