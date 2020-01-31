@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   
   $days_of_the_week = %w{日 月 火 水 木 金 土}
+  $mark_status = %w{未 申請中 承認 否認}
   
   # beforeフィルター
     
@@ -56,4 +57,14 @@ class ApplicationController < ActionController::Base
       flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
       redirect_to root_url
   end
+  
+  # ページ出力前にその月のapply　モデルの存在を確認・セットします
+  def set_apply_month
+    if @user.applies.find_by(month: @first_day)
+      @apply = @user.applies.find_by(month: @first_day)
+    else
+       @apply = @user.applies.create!(month: @first_day, user_id: @user.id)
+    end
+  end
+
 end

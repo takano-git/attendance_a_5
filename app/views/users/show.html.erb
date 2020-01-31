@@ -30,7 +30,7 @@
     </tr>
   </table>
 </div>
-
+<%= @first_day %>
 <%= link_to "勤怠の編集",  attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
 <div>
   <table class="table table-bordered table-striped table-hover" id="table-attendances">
@@ -112,7 +112,7 @@
         <th colspan="6"></th>
         <th><%= format("%.2f", @total_working_times.to_f) %></th>
         <td colspan="5"></td>
-        <th>所属長承認</th>
+        <th>所属長承認　<%= $mark_status[@apply.mark] %></th>
       </tr>
     </tfoot>
   </table>
