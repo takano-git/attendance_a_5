@@ -12,11 +12,19 @@
         <%= link_to "→", user_path(date: @first_day.next_month), class: "btn btn-primary" %> 
       </th>
       <th>
-        <%= User.human_attribute_name("designated_work_start_time")%>　<%= format_basic_info(@user.designated_work_start_time) %>
+        <%= User.human_attribute_name(:designated_work_start_time) %>　
+        <%= format_basic_info(@user.designated_work_start_time) if @user.designated_work_start_time.present? %>
         <br>
-        <%= User.human_attribute_name("designated_work_end_time")%>　<%= format_basic_info(@user.designated_work_end_time) %>
+        基本勤務終了時間　
+        <% if @user.designated_work_end_time.present? %>
+          <%= format_basic_info(@user.designated_work_end_time) %>
+        <% end %>
       </th>
-      <th colspan='3'><%= User.human_attribute_name("basic_work_time")%><%= format_basic_info(@user.basic_work_time) %></th>
+      <th colspan='3'>基本時間
+        <% if @user.basic_work_time.present? %>
+        <%= format_basic_info(@user.basic_work_time) %>
+        <% end %> 
+      </th>
       <th>初日　<%=l(@first_day, format: :short) %></th>
     </tr>
 
