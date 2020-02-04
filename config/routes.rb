@@ -15,7 +15,10 @@ Rails.application.routes.draw do
       patch 'update_basic_info'
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month' 
+      patch 'applies/update_one_month' # /users/:id/applies/update_one_month(.:format)
     end
     resources :attendances, only: :update
+    
+    resources :applies, only: :update  # /users/:user_id/applies/:id(.:format)
   end
 end

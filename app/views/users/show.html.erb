@@ -1,5 +1,6 @@
 <% provide(:title, @user.name) %>
-
+<% provide(:class_text, 'user--edit') %>
+<% provide(:button_text, '申請する') %>
 <div>
   <table class="table table-bordered table-condensed user-table">
     <tr>
@@ -38,7 +39,12 @@
     </tr>
   </table>
 </div>
-<%= @first_day %>
+<% if current_user.superior %>
+  
+  <p class="visible-inline">【所属長承認申請のお知らせ】<% if @applies %><span class="visible-inline">1件の申請があります</span><% end %></p>
+  <p>【勤怠変更申請のお知らせ】</p>
+  <p>【残業申請のお知らせ】</p>
+<% end %>
 <%= link_to "勤怠の編集",  attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
 <div>
   <table class="table table-bordered table-striped table-hover" id="table-attendances">
@@ -120,7 +126,16 @@
         <th colspan="6"></th>
         <th><%= format("%.2f", @total_working_times.to_f) %></th>
         <td colspan="5"></td>
-        <th>所属長承認　<%= $mark_status[@apply.mark] %></th>
+        <th>
+          所属長承認　<%= $mark_status[@apply.mark] %>
+          <%= form_with(model: @apply, url: user_apply_path(@user), method: :patch, local: true) do |f| %>
+            <%= f.collection_select(:authorizer, @authorizers, :id, :name , prompt: "") %>
+            <%= f.hidden_field :mark, :value => "1" %>
+            <%= f.hidden_field :moth, :value => @first_day %>
+
+            <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+          <% end %>
+        </th>
       </tr>
     </tfoot>
   </table>
