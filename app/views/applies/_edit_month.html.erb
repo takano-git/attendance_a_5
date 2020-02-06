@@ -29,11 +29,29 @@
 
             <div class="center">
               <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
-              <button type="button" class="btn btn-default btn-<%= yield(:class_text) %>" data-dismiss="modal">
-                キャンセル
-              </button>
             </div>
           <% end %>
+          <div>
+            <table class="table table-bordered table-condensed">
+              <thead>
+                <tr>
+                  <th><%= Apply.human_attribute_name(:month) %></th>
+                  <th><%= Apply.human_attribute_name(:mark) %></th>
+                  <th>変更</th>
+                  <th>勤怠を確認する</th>
+                </tr>
+              </thead>
+              
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
