@@ -13,8 +13,12 @@ class AppliesController < ApplicationController
     end
     redirect_to @user
   end
-  
-  def update_one_month
+
+  def edit_month
+    @user = User.find(params[:id])
+  end
+
+  def update_month
   end
   
     private
