@@ -16,6 +16,7 @@ class AppliesController < ApplicationController
 
   def edit_month
     @user = User.find(params[:id])
+    @applies = Apply.where(authorizer: @user.id)
   end
 
   def update_month
