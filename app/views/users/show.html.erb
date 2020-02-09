@@ -39,6 +39,7 @@
     </tr>
   </table>
 </div>
+
 <% if current_user.superior %>
   
   <%= link_to "基本情報編集", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn btn-default" %>
@@ -132,7 +133,9 @@
           <%= form_with(model: @apply, url: user_apply_path(@user), method: :patch, local: true) do |f| %>
             <%= f.collection_select(:authorizer, @authorizers, :id, :name , prompt: "") %>
             <%= f.hidden_field :mark, :value => "1" %>
-            <%= f.hidden_field :moth, :value => @first_day %>
+            <%= f.hidden_field :month, :value => @first_day %>
+            <%= f.hidden_field :user_id, :value => @user.id %>
+            <%= f.hidden_field :id, :value => @apply.id %>
 
             <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
           <% end %>
@@ -141,5 +144,8 @@
     </tfoot>
   </table>
 </div>
+確認用@apply.month:<%= @apply.month %><br>
+確認用@apply.id:<%= @apply.id %><br>
+確認用@first_day:<%= @first_day %><br>
 <!--モーダルウインドウ表示-->
 <div id="applies-edit-month" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

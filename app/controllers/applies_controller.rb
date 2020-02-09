@@ -1,9 +1,12 @@
 class AppliesController < ApplicationController
   
   def update
+
     @user = User.find(params[:user_id])
-    # @apply = Apply.find_by(user_id: @user.id)
-     @apply = Apply.find_by(user_id: @user.id)
+    @apply = Apply.find(params[:apply][:id])
+    # @apply = Apply.find_by(user_id: @user.id, month: @first_day)
+    # @apply = Apply.where(user_id: @user.id).where(month: @first_day).first
+    # apply = Apply.find_by(user_id: 2, mark: 1)
     
     # if @apply.update_attributes(authorizer: params[:authorizer], month: @first_day, mark: params[:mark])
     if @apply.update_attributes(applies_params)
@@ -16,7 +19,8 @@ class AppliesController < ApplicationController
 
   def edit_month
     @user = User.find(params[:id])
-    @applies = Apply.where(authorizer: @user.id)
+    @applies = Apply.where(authorizer: @user.id).where(mark: 1)
+    
   end
 
   def update_month
@@ -43,7 +47,7 @@ class AppliesController < ApplicationController
     private
 
     def applies_params
-      params.require(:apply).permit(:month, :mark, :authorizer)
+      params.require(:apply).permit(:month, :mark, :authorizer, :id, :apply_id)
       # params.permit(applies: [:month, :mark, :authorizer, :user_id])[:applies]
       # params.require(:user).permit(applies: [:month, :mark, :authorizer, :id, :user_id])[:applies]
     end

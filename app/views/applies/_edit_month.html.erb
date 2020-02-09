@@ -2,24 +2,17 @@
 
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
-    
-    <div class="modal-header">
+
+    <div class="modal-body">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
-      <h1 class="modal-title">1ヶ月分の勤怠承認申請</h1>
-    </div>
-    
-    <div class="modal-body">
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
+
+
+
           <% @applies.each do |apply| %>
-            <p>アプライID<%= apply.id %></p>
-            <p>アプライ月<%= apply.month %></p>
-            <p>アプライしたユーザーのID<%= apply.user_id %></p>
-            <p><%= User.find(apply.user_id).name %>からの1ヶ月勤怠申請</p>
-            <hr>
-            
             <h2>【<%= User.find(apply.user_id).name %>からの1ヶ月勤怠申請】</h2>
             <%= form_with(model: apply, url: applies_update_month_user_path(), local: true, method: :patch) do |f| %>
               <table class="table table-bordered table-condensed table-hover" id="table-attendances">
@@ -44,43 +37,11 @@
               <div class="center">
                 <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>
               </div>
-              
+
             <% end %>
           <% end %>
         
         
-          
-          <%= form_with(model: @applies, url: applies_update_month_user_path(), local: true, method: :patch) do |f| %>
-            <div>
-
-                <h1>○○さんの申請</h1>
-                <table class="table table-bordered table-condensed table-hover" id="table-attendances">
-                  <thead>
-                    <tr>
-                      <th><%= Apply.human_attribute_name(:month) %></th>
-                      <th><%= Apply.human_attribute_name(:mark) %></th>
-                      <th>変更</th>
-                      <th>勤怠を確認する</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      <tr>
-                        <td></td>
-                        <td><%= f.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: 1 } %></td>
-                        <td><%= f.check_box :checked %></td>
-                        <td><%= link_to "確認する", user_path(), class: "btn btn-lg btn-primary" %></td>
-                      </tr>
-                    </tbody>
-                  </table>
-      
-                <div class="center">
-                  <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>
-                </div>
-                
-            </div> 
-          <% end %>
-
-
         </div>
       </div>
     </div>
