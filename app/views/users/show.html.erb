@@ -1,6 +1,9 @@
 <% provide(:title, @user.name) %>
 <% provide(:class_text, 'user--edit') %>
 <% provide(:button_text, '申請する') %>
+確認用@apply.month:<%= @apply.month %><br>
+確認用@apply.id:<%= @apply.id %><br>
+確認用@first_day:<%= @first_day %><br>
 <div>
   <table class="table table-bordered table-condensed user-table">
     <tr>
@@ -144,8 +147,6 @@
     </tfoot>
   </table>
 </div>
-確認用@apply.month:<%= @apply.month %><br>
-確認用@apply.id:<%= @apply.id %><br>
-確認用@first_day:<%= @first_day %><br>
+
 <!--モーダルウインドウ表示-->
 <div id="applies-edit-month" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

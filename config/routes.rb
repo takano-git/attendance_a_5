@@ -11,11 +11,11 @@ Rails.application.routes.draw do
     collection { post :import }
     # patch 'update_basic_info'
     member do
-      get 'edit_basic_info'                # /users/:id/edit_basic_info　　　　　　　　ユーザーの基本情報編集　モーダルにもできる
+      get 'edit_basic_info'                # /users/:id/edit_basic_info　　　　　　　　ユーザーの基本情報編集
       patch 'update_basic_info'            # /users/:id/update_basic_info　　　　　　　
       get 'attendances/edit_one_month'     # /users/:id/attendances/edit_one_month　　　1ヶ月の勤怠をまとめて編集画面
       patch 'attendances/update_one_month' # /users/:id/attendances/update_one_month
-      get 'applies/edit_month'             # /users/:id/applies/edit_month　　　　　モーダルで1ヶ月分勤怠の申請編集画面
+      get 'applies/edit_month'             # /users/:id/applies/edit_month　　　　　   モーダルで1ヶ月分勤怠の申請編集画面
       patch 'applies/update_month'         # /users/:id/applies/update_month　　　　
     end
     resources :attendances, only: :update  # /users/:user_id/attendances/:id 　　　　　出勤登録

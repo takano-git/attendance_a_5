@@ -2,49 +2,46 @@
 
 <div class="modal-dialog modal-lg modal-dialog-center">
   <div class="modal-content">
-
     <div class="modal-body">
       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
-
-
-
-          <% @applies.each do |apply| %>
-            <h2>【<%= User.find(apply.user_id).name %>からの1ヶ月勤怠申請】</h2>
-            <%= form_with(model: apply, url: applies_update_month_user_path(), local: true, method: :patch) do |f| %>
-              <table class="table table-bordered table-condensed table-hover" id="table-attendances">
-                <thead>
-                  <tr>
-                    <th><%= Apply.human_attribute_name(:month) %></th>
-                    <th><%= Apply.human_attribute_name(:mark) %></th>
-                    <th>変更</th>
-                    <th>勤怠を確認する</th>
-                  </tr>
-                </thead>
+          <%= form_with(model: @user, url: applies_update_month_user_path(), local: true, method: :patch) do |f| %>
+            <% @apply_id_array.each do |apply_user_id| %>
+              <% user = User.find(apply_user_id) %>
+              <h2>【<%= user.name %>からの1ヶ月勤怠申請】</h2>
+                <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+                  <thead>
+                    <tr>
+                      <th><%= Apply.human_attribute_name(:month) %></th>
+                      <th><%= Apply.human_attribute_name(:mark) %></th>
+                      <th>変更</th>
+                      <th>勤怠を確認する</th>
+                    </tr>
+                  </thead>
                 <tbody>
-                  <tr>
-                    <td><%= l(apply.month, format: :short) %></td>
-                    <td><%= f.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: apply.mark } %></td>
-                    <td><%= f.check_box :check %></td>
-                    <td><%= link_to "確認する", user_path(apply.user_id), class: "btn btn-lg btn-primary" %></td>
-                  </tr>
+                  <% applies = user.applies.where(mark: 1).where(authorizer: current_user.id) %>
+                  <% applies.each do |sinsei| %>
+                    <%= f.fields_for "applies[]", sinsei do |af| %>
+                      <tr>
+                        <td><%= l(sinsei.month, format: :short) %></td>
+                        <td><%= af.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: sinsei.mark } %></td>
+                        <td><%= af.check_box :check %></td>
+                        <td><%= link_to "確認する", user_path(sinsei.user_id), class: "btn btn-lg btn-primary" %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
                 </tbody>
               </table>
-              
-              <div class="center">
-                <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>
-              </div>
-
             <% end %>
+ 　　　　       <div class="center">
+   　　　        <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>
+            </div>
           <% end %>
-        
-        
         </div>
       </div>
     </div>
-    
   </div>
 </div>

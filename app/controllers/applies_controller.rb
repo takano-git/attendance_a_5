@@ -20,35 +20,24 @@ class AppliesController < ApplicationController
   def edit_month
     @user = User.find(params[:id])
     @applies = Apply.where(authorizer: @user.id).where(mark: 1)
+    apply_id_array = []
+    @applies.each do |apply|
+      apply_id_array.push(apply.user_id)
+    end
     
+    @apply_id_array = apply_id_array.uniq
   end
 
   def update_month
-    
-    ActiveRecord::Base.transaction do # トランザクションを開始します。
-      applies_params.each do |id, item|
-        apply = Apply.find(id)
-        if item[:started_at].present? && item[:finished_at].blank?
-          flash[:danger] = "出社時間と退社時間を入力してください"
-          redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
-
-        else
-          apply.update_attributes!(item)
-        end
-      end
-    end
-    flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
-    redirect_to user_url(date: params[:date])
-  rescue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
-    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-    redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
   
     private
 
     def applies_params
       params.require(:apply).permit(:month, :mark, :authorizer, :id, :apply_id)
-      # params.permit(applies: [:month, :mark, :authorizer, :user_id])[:applies]
-      # params.require(:user).permit(applies: [:month, :mark, :authorizer, :id, :user_id])[:applies]
+    end
+    
+    def month_params
+      params.require(:user).permit(applies: [:month, :mark, :authorizer, :id, :apply_id])[:applies]
     end
 end
