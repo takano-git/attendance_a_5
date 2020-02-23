@@ -142,7 +142,7 @@
         <th><%= format("%.2f", @total_working_times.to_f) %></th>
         <td colspan="5"></td>
         <th>
-          所属長承認　<%= $mark_status[@apply.mark] %>
+          所属長承認 　<% if @apply.authorizer.present? %><%= User.find(@apply.authorizer).name %><% end %><%= $mark_status[@apply.mark] %>
 
           <% if current_user == @user %>
             <%= form_with(model: @apply, url: user_apply_path(@user), method: :patch, local: true) do |f| %>
