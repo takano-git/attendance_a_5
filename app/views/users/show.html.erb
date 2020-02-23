@@ -8,12 +8,16 @@
   <table class="table table-bordered table-condensed user-table">
     <tr>
       <th>
-        <%= link_to "←", user_path(date: @first_day.prev_month), class: "btn btn-primary" %>
+        <% if current_user == @user %>
+          <%= link_to "←", user_path(date: @first_day.prev_month), class: "btn btn-primary" %>
+        <% end %>
         <span>　</span>
         <%= l(@first_day, format: :middle) %>
         時間管理表
         <span>　</span>
-        <%= link_to "→", user_path(date: @first_day.next_month), class: "btn btn-primary" %> 
+        <% if current_user == @user %>
+          <%= link_to "→", user_path(date: @first_day.next_month), class: "btn btn-primary" %>
+        <% end %>
       </th>
       <th>
         <%= User.human_attribute_name(:designated_work_start_time) %>　
@@ -26,7 +30,7 @@
       </th>
       <th colspan='3'>基本時間
         <% if @user.basic_work_time.present? %>
-        <%= format_basic_info(@user.basic_work_time) %>
+          <%= format_basic_info(@user.basic_work_time) %>
         <% end %> 
       </th>
       <th>初日　<%=l(@first_day, format: :short) %></th>
@@ -42,16 +46,16 @@
     </tr>
   </table>
 </div>
-
-<% if current_user.superior %>
-  
-  <%= link_to "基本情報編集", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn btn-default" %>
-  <% if @applies.count > 0 %><span class="visible-inline"><%= @applies.count %>件の申請があります</span><% end %>
-  <p>【勤怠変更申請のお知らせ】</p>
-  <p>【残業申請のお知らせ】</p>
+<% if current_user == @user %>
+  <% if current_user.superior %>
+    <%= link_to "基本情報編集", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn btn-default" %>
+    <% if @applies.count > 0 %><span class="visible-inline"><%= @applies.count %>件の申請があります</span><% end %>
+    <p>【勤怠変更申請のお知らせ】</p>
+    <p>【残業申請のお知らせ】</p>
+  <% end %>
+  <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
+  <div>
 <% end %>
-<%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
-<div>
   <table class="table table-bordered table-striped table-hover" id="table-attendances">
     <thead>
       <tr>
@@ -95,15 +99,21 @@
           end
         %>
         <tr>
-          <th>残業ボタン</th>
+          <th>
+            <% if current_user == @user %>
+              残業ボタン
+            <% end %>
+          </th>
           <th><%= l(day.worked_on, format: :short) %></th>
           <th class="<%= css_class %>"><%= $days_of_the_week[day.worked_on.wday] %></th>
           <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
           <td><%= format_minute_per_fifteen(day.started_at) if day.started_at.present? %></td>
           <!--<td><%= day.started_at.min if day.started_at.present? %></td>-->
           <td>
-            <% if btn_text = attendance_state(day) %>
-              <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+            <% if current_user == @user %>
+              <% if btn_text = attendance_state(day) %>
+                <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
+              <% end %>
             <% end %>
           </td>
           <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td> 
@@ -133,14 +143,17 @@
         <td colspan="5"></td>
         <th>
           所属長承認　<%= $mark_status[@apply.mark] %>
-          <%= form_with(model: @apply, url: user_apply_path(@user), method: :patch, local: true) do |f| %>
-            <%= f.collection_select(:authorizer, @authorizers, :id, :name , prompt: "") %>
-            <%= f.hidden_field :mark, :value => "1" %>
-            <%= f.hidden_field :month, :value => @first_day %>
-            <%= f.hidden_field :user_id, :value => @user.id %>
-            <%= f.hidden_field :id, :value => @apply.id %>
 
-            <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+          <% if current_user == @user %>
+            <%= form_with(model: @apply, url: user_apply_path(@user), method: :patch, local: true) do |f| %>
+              <%= f.collection_select(:authorizer, @authorizers, :id, :name , prompt: "") %>
+              <%= f.hidden_field :mark, :value => "1" %>
+              <%= f.hidden_field :month, :value => @first_day %>
+              <%= f.hidden_field :user_id, :value => @user.id %>
+              <%= f.hidden_field :id, :value => @apply.id %>
+  
+              <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+            <% end %>
           <% end %>
         </th>
       </tr>
