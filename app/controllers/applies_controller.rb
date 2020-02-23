@@ -29,16 +29,15 @@ class AppliesController < ApplicationController
   end
 
   def update_month
-    # if "1" == params[:user][:applies][:check]
-    # end
-    
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       month_params.each do |id, item|
         apply = Apply.find(id)
-        apply.update_attributes!(item)
+        if params[:user][:applies][id][:check] == "1"
+          apply.update_attributes!(item)
+        end
       end
     end
-    flash[:success] = "1ヶ月分の勤怠申請を更新しました。"
+    # flash[:success] = "1ヶ月分の勤怠申請を更新しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
