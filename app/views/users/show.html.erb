@@ -48,8 +48,12 @@
 </div>
 <% if current_user == @user %>
   <% if current_user.superior %>
-    <%= link_to "基本情報編集", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn btn-default" %>
-    <% if @applies.count > 0 %><span class="visible-inline"><%= @applies.count %>件の申請があります</span><% end %>
+    <% if @applies.count > 0 %>
+      <%= link_to "【所属長承認申請のお知らせ】", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn-notice danger-color" %>
+      <span class="visible-inline danger-color box-danger"><%= @applies.count %>件の申請があります</span>
+    <% else %>
+      <P>【所属長承認申請のお知らせ】</P>
+    <% end %>
     <p>【勤怠変更申請のお知らせ】</p>
     <p>【残業申請のお知らせ】</p>
   <% end %>
