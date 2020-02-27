@@ -9,6 +9,7 @@
           <th>曜日</th>
           <th>出社</th>
           <th>退社</th>
+          <th>翌日</th>
           <th>在社時間</th>
           <th>備考</th>
           <th>残業時間</th>
@@ -37,6 +38,7 @@
               <td><%= attendance.time_field :started_at, class: "form-control" %></td>
               <td><%= attendance.time_field :finished_at, class: "form-control" %></td>
             <% end %>
+            <td>チェック</td>
             <td>
               <% if day.started_at.present? && day.finished_at.present? %>
                 <%= working_times(day.started_at, day.finished_at) %>
