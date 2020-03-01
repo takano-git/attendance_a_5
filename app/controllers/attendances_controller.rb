@@ -29,6 +29,7 @@ class AttendancesController < ApplicationController
   
   def edit_one_month
     # @authorizers= User.where(superior: true ).where.not(id: @user.id)
+    @change_authorizers= User.where(superior: true ).where.not(id: @user.id)
   end
   
   # まとめて更新機能
