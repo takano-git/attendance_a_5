@@ -28,7 +28,6 @@ class AttendancesController < ApplicationController
   end
   
   def edit_one_month
-    # @authorizers= User.where(superior: true ).where.not(id: @user.id)
     @change_authorizers= User.where(superior: true ).where.not(id: @user.id)
   end
   
@@ -55,7 +54,7 @@ class AttendancesController < ApplicationController
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note, :overtime_instruction, :instructor])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark])[:attendances]
     end
     
     

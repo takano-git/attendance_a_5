@@ -18,7 +18,7 @@
           <th>在社時間</th>
           <th>備考</th>
           <th>残業時間</th>
-          <th>支持者</th>
+          <th>指示者確認印</th>
         </tr>
       </thead>
       <tbody>
@@ -52,7 +52,10 @@
 
             <td><%= attendance.text_field :note, class: "form-control" %></td>
             <td><%= attendance.text_field :overtime_instruction, class: "form-control" %></td>
-            <td><%= attendance.text_field :instructor, class: "form-control" %></td>
+            <td>
+              <%= attendance.collection_select(:change_authorizer_id, @change_authorizers, :id, :name , prompt: "") %>
+              <%= attendance.hidden_field :mark, :value => "1" %>
+            </td>
           </tr>
         <% end %>
         <% end %>
