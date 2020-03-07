@@ -18,9 +18,13 @@ class UsersController < ApplicationController
 
   def show
     @worked_sum = @attendances.where.not(started_at: nil).count
+    # 1ヶ月の勤怠認証の為
     @authorizers= User.where(superior: true ).where.not(id: @user.id)
     @applies = Apply.where(authorizer: @user.id).where(mark: 1)
-    
+    # 勤怠変更認証の為
+    @change_attendances = Attendance.where(change_authorizer_id: @user.id).where(mark: 1)
+
+
   end
 
   def new

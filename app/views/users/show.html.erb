@@ -54,7 +54,11 @@
     <% else %>
       <P>【所属長承認申請のお知らせ】</P>
     <% end %>
-    <p>【勤怠変更申請のお知らせ】</p>
+    <% if @change_attendances.count > 0 %>
+      <%= link_to "【勤怠変更申請のお知らせ】", attendances_change_one_month_user_path(@user), remote: true, class: "btn-notice danger-color" %>
+    <% else %> 
+      <p>【勤怠変更申請のお知らせ】</p>
+    <% end %>
     <p>【残業申請のお知らせ】</p>
   <% end %>
   <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
@@ -165,5 +169,8 @@
   </table>
 </div>
 
-<!--モーダルウインドウ表示-->
+<!--1ヶ月申請の承認モーダルウインドウ表示-->
 <div id="applies-edit-month" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<!--勤怠変更の承認モーダルウインドウ表示-->
+<div id="attendances-change-one-month" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

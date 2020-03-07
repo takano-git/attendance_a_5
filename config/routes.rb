@@ -16,6 +16,8 @@ Rails.application.routes.draw do
       patch 'attendances/update_one_month' # /users/:id/attendances/update_one_month    1ヶ月の勤怠をまとめて保存
       get 'applies/edit_month'             # /users/:id/applies/edit_month　　　　　   モーダルで1ヶ月分勤怠の申請編集画面
       patch 'applies/update_month'         # /users/:id/applies/update_month　　　　
+      get 'attendances/change_one_month'   # /users/:id/attendances/change_one_month　　モーダルで勤怠の変更申請編集画面
+      patch 'attendances/change_one_month' # /users/:id/attendances/change_one_month　　　　
     end
     resources :attendances, only: :update  # /users/:user_id/attendances/:id 　　　　　出勤登録
     
