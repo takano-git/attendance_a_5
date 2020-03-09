@@ -38,7 +38,7 @@
                       <th rowspan = "3">備考</th>
                       <th rowspan = "3">指示者確認印</th>
                       <th rowspan = "3">変更</th>
-                      <th rowspan = "3">勤怠を確認するß</th>
+                      <th rowspan = "3">勤怠を確認する</th>
                     </tr>
                     <tr>
                       <th colspan = "2">出社</th>
@@ -58,14 +58,24 @@
                     </tr>
                   </thead>
                 <tbody>
-                  <% applies = user.applies.where(mark: 1).where(authorizer: current_user.id) %>
-                  <% applies.each do |sinsei| %>
-                    <%= f.fields_for "applies[]", sinsei do |af| %>
+                  <% attendances = user.attendances.where(mark: 1).where(user_id: user) %>
+                  <% attendances.each do |change_attendance| %>
+                    <%= f.fields_for "attendances[]", change_attendance do |cf| %>
                       <tr>
-                        <td><%= l(sinsei.month, format: :short) %></td>
-                        <td><%= af.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: sinsei.mark } %></td>
-                        <td><%= af.check_box :check %></td>
-                        <td><%= link_to "確認する", user_path(sinsei.user_id), class: "btn btn-lg btn-primary" %></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><%= cf.text_field :note %></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                       </tr>
                     <% end %>
                   <% end %>
