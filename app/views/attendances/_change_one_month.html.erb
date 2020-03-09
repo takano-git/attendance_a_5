@@ -8,7 +8,75 @@
       </button>
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
-          <h1>test</h1>
+          <!--ここから確認用表示-->
+          <p>@change_attendances確認用</p>
+          <% @change_attendances.each do |change_attendance| %>
+            <span>change_attendance.change_authorizer_id,</span>
+            <%= change_attendance.change_authorizer_id %>
+            <span>@user.id</span>
+            <%= @user.id %>
+            <br>
+          <% end %>
+          
+          <% @applicant_change_id_array.each do |applicant_change_id| %>
+            <br>
+            【確認用】申請者　applicant_change_id:<%= applicant_change_id %>
+          <% end %>
+          <!--ここまで確認用表示-->
+          <!--ここからコピぺの改造-->
+          <%= form_with(model: @user, url: attendances_change_one_month_user_path, local: true, method: :patch) do |f| %>
+            <% @applicant_change_id_array.each do |applicant_change_id_array| %>
+              <% user = User.find(applicant_change_id_array) %>
+              <h2>【<%= user.name %>からの勤怠変更申請】</h2>
+                <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+                  <thead>
+                    <tr>
+                      <th rowspan = "3">日付</th>
+                      <th rowspan = "3">曜日</th>
+                      <th colspan= "4">変更前</th>
+                      <th colspan= "4">変更後</th>
+                      <th rowspan = "3">備考</th>
+                      <th rowspan = "3">指示者確認印</th>
+                      <th rowspan = "3">変更</th>
+                      <th rowspan = "3">勤怠を確認するß</th>
+                    </tr>
+                    <tr>
+                      <th colspan = "2">出社</th>
+                      <th colspan = "2">退社</th>
+                      <th colspan = "2">出社</th>
+                      <th colspan = "2">退社</th>
+                    </tr>
+                    <tr>
+                      <th>時</th>
+                      <th>分</th>
+                      <th>時</th>
+                      <th>分</th>
+                      <th>時</th>
+                      <th>分</th>
+                      <th>時</th>
+                      <th>分</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                  <% applies = user.applies.where(mark: 1).where(authorizer: current_user.id) %>
+                  <% applies.each do |sinsei| %>
+                    <%= f.fields_for "applies[]", sinsei do |af| %>
+                      <tr>
+                        <td><%= l(sinsei.month, format: :short) %></td>
+                        <td><%= af.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: sinsei.mark } %></td>
+                        <td><%= af.check_box :check %></td>
+                        <td><%= link_to "確認する", user_path(sinsei.user_id), class: "btn btn-lg btn-primary" %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
+ 　　　　       <div class="center">
+   　　　        <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>
+            </div>
+          <% end %>
+         <!--ここまでコピペの改造-->
         </div>
       </div>
     </div>

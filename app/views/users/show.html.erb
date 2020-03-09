@@ -49,17 +49,26 @@
 <% if current_user == @user %>
   <% if current_user.superior %>
     <% if @applies.count > 0 %>
-      <%= link_to "【所属長承認申請のお知らせ】", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn-notice danger-color" %>
-      <span class="visible-inline danger-color box-danger"><%= @applies.count %>件の申請があります</span>
+      <p>
+        <%= link_to "【所属長承認申請のお知らせ】", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn-notice danger-color" %>
+        <span class="visible-inline danger-color box-danger"><%= @applies.count %>件の申請があります</span>
+      </p>
+      
     <% else %>
       <P>【所属長承認申請のお知らせ】</P>
     <% end %>
     <% if @change_attendances.count > 0 %>
-      <%= link_to "【勤怠変更申請のお知らせ】", attendances_change_one_month_user_path(@user), remote: true, class: "btn-notice danger-color" %>
+      <p>
+        <%= link_to "【勤怠変更申請のお知らせ】", attendances_change_one_month_user_path(@user), remote: true, class: "btn-notice danger-color" %>
+        <span class="visible-inline danger-color box-danger"><%= @change_attendances.count %>件の申請があります</span>
+      </p>
     <% else %> 
       <p>【勤怠変更申請のお知らせ】</p>
+      <span class="visible-inline danger-color box-danger">○○件の申請があります</span>
     <% end %>
-    <p>【残業申請のお知らせ】</p>
+    <p>
+      【残業申請のお知らせ】
+    </p>
   <% end %>
   <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
   <div>

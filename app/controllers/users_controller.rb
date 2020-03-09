@@ -23,8 +23,6 @@ class UsersController < ApplicationController
     @applies = Apply.where(authorizer: @user.id).where(mark: 1)
     # 勤怠変更認証の為
     @change_attendances = Attendance.where(change_authorizer_id: @user.id).where(mark: 1)
-
-
   end
 
   def new

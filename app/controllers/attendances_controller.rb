@@ -51,6 +51,21 @@ class AttendancesController < ApplicationController
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
   
+  def change_one_month
+    @user = User.find(params[:id])
+    @change_attendances = Attendance.where(change_authorizer_id: @user.id).where(mark: 1) 
+    applicant_change_id_array = []
+    @change_attendances.each do |change_attendance|
+      applicant_change_id_array.push(change_attendance.user_id)
+    end
+
+    @applicant_change_id_array = applicant_change_id_array.uniq
+  end
+  
+  def update_change_one_month
+  end
+    
+  
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
