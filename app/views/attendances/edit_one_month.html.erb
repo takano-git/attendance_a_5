@@ -1,4 +1,9 @@
 <% provide(:title, @user.name) %>
+
+<% def changed %>
+  <% %>
+<% end %>
+
 <%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
   <div>
 確認用@change_authorizers (Userモデルのオブジェクトが入っているよ。)
@@ -51,7 +56,11 @@
             <td><%= attendance.text_field :note, class: "form-control" %></td>
             <td>
               <%= attendance.collection_select(:change_authorizer_id, @change_authorizers, :id, :name , prompt: "") %>
-              <%= attendance.hidden_field :mark, :value => "1" %>
+              <% if changed %>
+                <%= attendance.hidden_field :mark, :value => "1" %>
+  
+              
+              <% end %>
             </td>
           </tr>
         <% end %>

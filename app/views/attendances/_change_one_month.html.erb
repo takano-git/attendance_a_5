@@ -61,21 +61,30 @@
                   <% attendances = user.attendances.where(mark: 1).where(user_id: user) %>
                   <% attendances.each do |change_attendance| %>
                     <%= f.fields_for "attendances[]", change_attendance do |cf| %>
+                      <%
+                        css_class = 
+                        case $days_of_the_week[change_attendance.worked_on.wday]
+                        when '土'
+                          'text-primary'
+                        when '日'
+                          'text-danger'
+                        end
+                      %>
                       <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><%= l(change_attendance.worked_on, format: :short) %></td>
+                        <td class="<%= css_class %>"><%= $days_of_the_week[change_attendance.worked_on.wday] %></td>
+                        <td><%= l(change_attendance.started_at, format: :hour) if change_attendance.started_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(change_attendance.started_at) if change_attendance.started_at.present? %></td>
+                        <td><%= l(change_attendance.finished_at, format: :hour) if change_attendance.finished_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(change_attendance.finished_at) if change_attendance.finished_at.present? %></td>
+                        <td><%= l(change_attendance.applying_started_at, format: :hour) if change_attendance.applying_started_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(change_attendance.applying_started_at) if change_attendance.started_at.present? %></td>
+                        <td><%= l(change_attendance.applying_finished_at, format: :hour) if change_attendance.applying_finished_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(change_attendance.applying_finished_at) if change_attendance.finished_at.present? %></td>
                         <td><%= cf.text_field :note %></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td><%= cf.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: change_attendance.mark } %></td>
+                        <td>確認用。アテンダンスID:<%= change_attendance.id %></td>
+                        <td><%= link_to "確認する", user_path(change_attendance.user_id), class: "btn btn-primary" %></td>
                       </tr>
                     <% end %>
                   <% end %>

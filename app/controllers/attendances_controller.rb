@@ -40,6 +40,9 @@ class AttendancesController < ApplicationController
           flash[:danger] = "出社時間と退社時間を入力してください"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
         else
+          if item[:started_at] != attendance.started_at
+            item[:mark] = "1"
+          end
           attendance.update_attributes!(item)
         end
       end
