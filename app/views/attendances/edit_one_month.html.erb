@@ -43,7 +43,9 @@
               <td><%= attendance.time_field :started_at, readonly: true, class: "form-control" %></td>
               <td><%= attendance.time_field :finished_at, readonly: true, class: "form-control" %></td>
             <% else %>
-              <td><%= attendance.time_field :applying_started_at, class: "form-control" %></td>
+              <td>
+                <%= attendance.time_field :applying_started_at, class: "form-control" %>
+              </td>
               <td><%= attendance.time_field :applying_finished_at, class: "form-control" %></td>
             <% end %>
             <td>チェック</td>
@@ -53,14 +55,9 @@
               <% end %>
             </td>
 
-            <td><%= attendance.text_field :note, class: "form-control" %></td>
+            <td><%= attendance.text_field :applying_note, class: "form-control" %></td>
             <td>
               <%= attendance.collection_select(:change_authorizer_id, @change_authorizers, :id, :name , prompt: "") %>
-              <% if changed %>
-                <%= attendance.hidden_field :mark, :value => "1" %>
-  
-              
-              <% end %>
             </td>
           </tr>
         <% end %>

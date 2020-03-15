@@ -35,14 +35,31 @@ class AttendancesController < ApplicationController
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
+      
         attendance = Attendance.find(id)
+
         if item[:started_at].present? && item[:finished_at].blank?
           flash[:danger] = "出社時間と退社時間を入力してください"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
         else
-          if item[:started_at] != attendance.started_at
-            item[:mark] = "1"
+
+
+          if item[:applying_started_at].present? && attendance.started_at.nil?
+            attendance.mark = "1"
+            attendance.save
+          elsif item[:applying_started_at].present? && item[:applying_started_at] != attendance.started_at
+            attendance.mark = "1"
+            attendance.save
+          elsif item[:applying_finish_at].present? && attendance.finished_at.nil?
+            attendance.mark = "1"
+            attendance.save
+          elsif item[:applying_finished_at].present? && item[:applying_finished_at] != attendance.finished_at
+            attendance.mark = "1"
+            attendance.save
           end
+          
+          
+          
           attendance.update_attributes!(item)
         end
       end
@@ -72,7 +89,7 @@ class AttendancesController < ApplicationController
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note])[:attendances]
     end
     
     
