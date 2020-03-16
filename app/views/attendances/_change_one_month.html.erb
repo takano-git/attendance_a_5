@@ -24,7 +24,7 @@
           <% end %>
           <!--ここまで確認用表示-->
           <!--ここからコピぺの改造-->
-          <%= form_with(model: @user, url: attendances_change_one_month_user_path, local: true, method: :patch) do |f| %>
+          <%= form_with(model: @user, url: attendances_update_change_one_month_user_path, local: true, method: :patch) do |f| %>
             <% @applicant_change_id_array.each do |applicant_change_id_array| %>
               <% user = User.find(applicant_change_id_array) %>
               <h2>【<%= user.name %>からの勤怠変更申請】</h2>
@@ -79,9 +79,12 @@
                         <td><%= format_minute_per_fifteen(change_attendance.finished_at) if change_attendance.finished_at.present? %></td>
                         <td><%= l(change_attendance.applying_started_at, format: :hour) if change_attendance.applying_started_at.present? %></td>
                         <td><%= format_minute_per_fifteen(change_attendance.applying_started_at) if change_attendance.started_at.present? %></td>
+                        <%= cf.hidden_field :applying_started_at %>
                         <td><%= l(change_attendance.applying_finished_at, format: :hour) if change_attendance.applying_finished_at.present? %></td>
                         <td><%= format_minute_per_fifteen(change_attendance.applying_finished_at) if change_attendance.finished_at.present? %></td>
-                        <td><%= cf.text_field :note %></td>
+                        <%= cf.hidden_field :applying_finished_at %>
+                        <td><%= change_attendance.applying_note %></td>
+                        <%= cf.hidden_field :applying_note %>
                         <td><%= cf.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: change_attendance.mark } %></td>
                         <td>確認用。アテンダンスID:<%= change_attendance.id %></td>
                         <td><%= link_to "確認する", user_path(change_attendance.user_id), class: "btn btn-primary" %></td>

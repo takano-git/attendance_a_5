@@ -31,7 +31,7 @@ class AttendancesController < ApplicationController
     @change_authorizers= User.where(superior: true ).where.not(id: @user.id)
   end
   
-  # まとめて更新機能
+  # まとめて勤怠変更の申請内容を保存して送信する機能
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
@@ -44,9 +44,11 @@ class AttendancesController < ApplicationController
         else
 
 
-          if item[:applying_started_at].present? && attendance.started_at.nil?
-            attendance.mark = "1"
-            attendance.save
+          if item[:applying_started_at].present? && attendance.started_at.nil?       # :applying_started_atに入力があったら 
+              if item[:applying_started_at] != attendance.started_at                   # item[:applying_started_at]　と　attendance.started_at が違えば
+                attendance.mark = "1"                                                  # 申請中　のステータスをつける
+                attendance.save
+              end
           elsif item[:applying_started_at].present? && item[:applying_started_at] != attendance.started_at
             attendance.mark = "1"
             attendance.save
@@ -70,6 +72,7 @@ class AttendancesController < ApplicationController
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
+
   
   def change_one_month
     @user = User.find(params[:id])
@@ -82,10 +85,34 @@ class AttendancesController < ApplicationController
     @applicant_change_id_array = applicant_change_id_array.uniq
   end
   
+
+
+  # モーダルの変更申請まとめて更新機能
   def update_change_one_month
+    ActiveRecord::Base.transaction do # トランザクションを開始します。
+      attendances_params.each do |id, item|
+        attendance = Attendance.find(id)
+        if item[:mark] == "2"
+          attendance.previous_started_at = attendance.started_at if attendance.started_at.nil?
+          attendance.previous_finished_at = attendance.finished_at
+          attendance.started_at = item[:applying_started_at]
+          attendance.finished_at = item[:applying_finished_at]
+          attendance.mark = item[:mark]
+          attendance.save
+        end
+      end
+    end
+    flash[:success] = "勤怠変更の申請を更新しました。"
+    redirect_to user_url(date: params[:date])
+  rescue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
+    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+    redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
-    
-  
+
+
+
+
+ 
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
