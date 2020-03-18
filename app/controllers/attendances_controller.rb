@@ -31,7 +31,7 @@ class AttendancesController < ApplicationController
     @change_authorizers= User.where(superior: true ).where.not(id: @user.id)
   end
   
-  # まとめて勤怠変更の申請内容を保存して送信する機能
+  # まとめて勤怠変更の申請内容を送信する機能
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
@@ -42,22 +42,29 @@ class AttendancesController < ApplicationController
           flash[:danger] = "出社時間と退社時間を入力してください"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
         else
-
-
-          if item[:applying_started_at].present? && attendance.started_at.nil?       # :applying_started_atに入力があったら 
-              if item[:applying_started_at] != attendance.started_at                   # item[:applying_started_at]　と　attendance.started_at が違えば
+          if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定　:applying_started_atに入力があ理、BDのattendance.started_atがnilだったら 
+              # if item[:applying_started_at] != attendance.started_at.strftime("%H:%M") 
                 attendance.mark = "1"                                                  # 申請中　のステータスをつける
                 attendance.save
-              end
-          elsif item[:applying_started_at].present? && item[:applying_started_at] != attendance.started_at
-            attendance.mark = "1"
-            attendance.save
-          elsif item[:applying_finish_at].present? && attendance.finished_at.nil?
-            attendance.mark = "1"
-            attendance.save
-          elsif item[:applying_finished_at].present? && item[:applying_finished_at] != attendance.finished_at
-            attendance.mark = "1"
-            attendance.save
+              # end
+          elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変更を想定　:applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
+            if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") # trueになってしまったitem[:applying_started_at]　と　attendance.started_at が違えば
+              attendance.mark = "1"                                                  # 申請中　のステータスをつける
+              attendance.save
+            end
+          elsif item[:applying_finish_at].present? && attendance.finished_at.nil?      # :applying_finish_atに入力があり、attendance.finished_atがnilだったら
+              attendance.mark = "1"                                                  # 申請中　のステータスをつける
+              attendance.save
+          elsif item[:applying_finish_at].present? && attendance.finished_at.present?      # :applying_finish_atに入力があったら
+            if item[:applying_finish_at] != attendance.finished_at.strftime("%H:%M:%S.%L")      # true item[:applying_finished_at]　と　attendance.finished_at が違えば
+              attendance.mark = "1"                                                  # 申請中　のステータスをつける
+              attendance.save
+            end
+          elsif item[:applying_note].present?
+            if item[:applying_note] != attendance.note
+              attendance.mark = "1"
+              attendance.save
+            end
           end
           
           
@@ -66,7 +73,7 @@ class AttendancesController < ApplicationController
         end
       end
     end
-    flash[:success] = "1ヶ月分の勤怠情報を更新しました。"
+    flash[:success] = "勤怠の変更を送信しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
@@ -97,6 +104,7 @@ class AttendancesController < ApplicationController
           attendance.previous_finished_at = attendance.finished_at
           attendance.started_at = item[:applying_started_at]
           attendance.finished_at = item[:applying_finished_at]
+          attendance.note = item[:applying_note]
           attendance.mark = item[:mark]
           attendance.save
         end

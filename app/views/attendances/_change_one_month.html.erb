@@ -86,8 +86,8 @@
                         <td><%= change_attendance.applying_note %></td>
                         <%= cf.hidden_field :applying_note %>
                         <td><%= cf.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: change_attendance.mark } %></td>
-                        <td>確認用。アテンダンスID:<%= change_attendance.id %></td>
-                        <td><%= link_to "確認する", user_path(change_attendance.user_id), class: "btn btn-primary" %></td>
+                        <td><%= f.check_box :checked %></td>
+                        <td><%= link_to "確認する", user_path(change_attendance.user_id), class: "btn btn-primary" %>確認用。アテンダンスID:<%= change_attendance.id %></td>
                       </tr>
                     <% end %>
                   <% end %>
