@@ -99,7 +99,9 @@ class AttendancesController < ApplicationController
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
-        if item[:mark] == "2"
+        # if item[:mark] == "2" && item[:check] == "0"
+        
+        if item[:mark] == "2" && item[:change_checked] == "1"  # 全部保存されるパターン
           attendance.previous_started_at = attendance.started_at if attendance.started_at.nil?
           attendance.previous_finished_at = attendance.finished_at
           attendance.started_at = item[:applying_started_at]
@@ -124,7 +126,7 @@ class AttendancesController < ApplicationController
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked])[:attendances]
     end
     
     
