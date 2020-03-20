@@ -101,12 +101,15 @@ class AttendancesController < ApplicationController
         attendance = Attendance.find(id)
         # if item[:mark] == "2" && item[:check] == "0"
         
-        if item[:mark] == "2" && item[:change_checked] == "1"  # 全部保存されるパターン
+        if item[:mark] == "2" && item[:change_checked] == "1"  # 承認　全部保存されるパターン
           attendance.previous_started_at = attendance.started_at if attendance.started_at.nil?
           attendance.previous_finished_at = attendance.finished_at
           attendance.started_at = item[:applying_started_at]
           attendance.finished_at = item[:applying_finished_at]
           attendance.note = item[:applying_note]
+          attendance.mark = item[:mark]
+          attendance.save
+        elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認　マークのみ保存し後は保存しない
           attendance.mark = item[:mark]
           attendance.save
         end
