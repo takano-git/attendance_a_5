@@ -117,7 +117,7 @@
         <tr>
           <th>
             <% if current_user == @user %>
-              残業ボタン
+              <%= link_to "残業申請", attendances_edit_overtime_user_path(@user, overtime_attendance: day), remote: true, class: "btn btn-success" %>
             <% end %>
           </th>
           <th><%= l(day.worked_on, format: :short) %></th>
@@ -182,3 +182,6 @@
 
 <!--勤怠変更の承認モーダルウインドウ表示-->
 <div id="attendances-change-one-month" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<!--残業申請モーダルウインドウ表示（申請者用）-->
+<div id="edit-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>

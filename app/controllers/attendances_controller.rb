@@ -122,7 +122,16 @@ class AttendancesController < ApplicationController
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
 
-
+  # 残業申請の編集画面の機能（申請者側）
+  def edit_overtime
+    @user = User.find(params[:id])
+    @overtime_attendances = Attendance.where(id: params[:overtime_attendance]).where(user_id: @user.id)
+    @overtime_authorizers = User.where(superior: true ).where.not(id: @user.id)
+  end
+  
+  # 残業申請の内容を保存する機能（申請の途中）
+  def update_overtime
+  end
 
 
  
