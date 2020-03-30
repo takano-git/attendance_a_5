@@ -131,6 +131,12 @@ class AttendancesController < ApplicationController
   
   # 残業申請の内容を保存する機能（申請の途中）
   def update_overtime
+    attendances_params.each do |id, item|
+    
+      attendance = Attendance.find(id)
+      attendance.update_attributes!(item)
+    end
+    redirect_to user_url(date: params[:date]) #一応遷移した
   end
 
 
@@ -138,7 +144,7 @@ class AttendancesController < ApplicationController
   private
     # 1ヶ月分の勤怠情報を扱います。
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at, :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id])[:attendances]
     end
     
     

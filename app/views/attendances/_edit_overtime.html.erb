@@ -13,7 +13,7 @@
 
 
           <!--ここからコピぺの改造-->
-          <%= form_with(model: @user, url: attendances_edit_overtime_user_path, local: true, method: :patch) do |f| %>
+          <%= form_with(model: @user, url: attendances_update_overtime_user_path(@user), local: true, method: :patch) do |f| %>
               <h2>【残業申請】</h2>
                 <table class="table table-bordered table-condensed table-hover" id="table-attendances">
                   <thead>
@@ -42,10 +42,10 @@
                           <td><%= l(day.worked_on, format: :short) %></td>
                           <td class="<%= css_class %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
                           <td><%= af.time_field :overtime_finished_at, class: "form-control" %></td>
-                          <td>チェック</td>
+                          <td><%= f.check_box :tomorrow %></td>
                           <td><%= af.text_field :overtime_note %></td>
                           <td><%= af.collection_select(:overtime_authorizer_id, @overtime_authorizers, :id, :name , prompt: "") %></td>
-                              <%= af.hidden_field :id, :value => day.id %>
+                          
                               <%= af.hidden_field :user_id, :value => day.user_id %>
                               <%= af.hidden_field :overtime_mark, :value => 1 %>
                         </tr>
