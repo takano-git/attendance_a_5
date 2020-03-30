@@ -20,6 +20,8 @@ Rails.application.routes.draw do
       patch 'attendances/update_change_one_month' # /users/:id/attendances/update_change_one_month　モーダルで勤怠の変更申請まとめて編集画面　　　
       get 'attendances/edit_overtime'   # /users/:id/attendances/edit_overtime　　モーダルで残業申請（申請者側）
       patch 'attendances/update_overtime' # /users/:id/attendances/update_overtime　　　　
+      get 'attendances/edit_judgment_overtime'   # /users/:id/attendances/edit_overtime　　モーダルで残業申請のジャッジを編集（上長側）
+      patch 'attendances/update_judgment_overtime' # /users/:id/attendances/update_overtime　　　　
     end
     resources :attendances, only: :update  # /users/:user_id/attendances/:id 　　　　　出勤登録
     

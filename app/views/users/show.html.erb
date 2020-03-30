@@ -65,9 +65,14 @@
     <% else %> 
       <p>【勤怠変更申請のお知らせ】</p>
     <% end %>
-    <p>
-      【残業申請のお知らせ】
-    </p>
+    <% if @overtime_attendances.count > 0 %>
+      <p>
+        <%= link_to "【残業申請のお知らせ】", attendances_change_one_month_user_path(@user), remote: true, class: "btn-notice danger-color" %>
+        <span class="visible-inline danger-color box-danger"><%= @overtime_attendances.count %>件の申請があります</span>
+      </p>
+    <% else %> 
+      <p>【残業申請のお知らせ】</p>
+    <% end %>
   <% end %>
   <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
   <div>
