@@ -1,0 +1,76 @@
+<% provide(:class_text, 'basic-info') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-body">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <div class="row">
+        <div class="col-md-10 col-md-offset-1">
+          <!--ここからコピぺの改造-->
+          <%= form_with(model: @user, url: attendances_update_judgment_overtime_user_path, local: true, method: :patch) do |f| %>
+            <% @judgment_overtime_attendances_id_array.each do |judgment_overtime_attendances_id| %>
+              <% user = User.find(judgment_overtime_attendances_id) %>
+              <h2>【<%= user.name %>からの勤怠変更申請】</h2>
+                <table class="table table-bordered table-condensed table-hover" id="table-attendances">
+                  <thead>
+                    <tr>
+                      <th rowspan = "3">日付</th>
+                      <th rowspan = "3">曜日</th>
+                      <th colspan= "4">終了予定時間</th>
+                      <th colspan= "4">指定勤務終了時間</th>
+                      <th rowspan = "3">時間外時間</th>
+                      <th rowspan = "3">業務処理内容</th>
+                      <th rowspan = "3">指示者確認印</th>
+                      <th rowspan = "3">勤怠を確認する</th>
+                    </tr>
+                  </thead>
+                <tbody>
+                  <% attendances = user.attendances.where(overtime_mark: 1).where(user_id: user) %>
+                  <% attendances.each do |user_overtime_attendance| %>
+                    <%= f.fields_for "attendances[]", user_overtime_attendance do |uf| %>
+                      <%
+                        css_class = 
+                        case $days_of_the_week[user_overtime_attendance.worked_on.wday]
+                        when '土'
+                          'text-primary'
+                        when '日'
+                          'text-danger'
+                        end
+                      %>
+                      <tr>
+                        <td><%= l(user_overtime_attendance.worked_on, format: :short) %></td>
+                        <td class="<%= css_class %>"><%= $days_of_the_week[user_overtime_attendance.worked_on.wday] %></td>
+                        <td><%= l(user_overtime_attendance.started_at, format: :hour) if user_overtime_attendance.started_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(user_overtime_attendance.started_at) if user_overtime_attendance.started_at.present? %></td>
+                        <td><%= l(user_overtime_attendance.finished_at, format: :hour) if user_overtime_attendance.finished_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(user_overtime_attendance.finished_at) if user_overtime_attendance.finished_at.present? %></td>
+                        <td><%= l(user_overtime_attendance.applying_started_at, format: :hour) if user_overtime_attendance.applying_started_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(user_overtime_attendance.applying_started_at) if user_overtime_attendance.started_at.present? %></td>
+                        <%= uf.hidden_field :applying_started_at %>
+                        <td><%= l(user_overtime_attendance.applying_finished_at, format: :hour) if user_overtime_attendance.applying_finished_at.present? %></td>
+                        <td><%= format_minute_per_fifteen(user_overtime_attendance.applying_finished_at) if user_overtime_attendance.finished_at.present? %></td>
+                        <%= uf.hidden_field :applying_finished_at %>
+                        <td><%= user_overtime_attendance.applying_note %></td>
+                        <%= uf.hidden_field :applying_note %>
+                        <td><%= uf.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: user_overtime_attendance.overtime_mark } %></td>
+                        <!--チェックなし　０　チェックあり　１-->
+                        <td><%= uf.check_box :change_checked %></td>  
+                        <td><%= link_to "確認する", user_path(user_overtime_attendance.user_id), class: "btn btn-primary" %>確認用。アテンダンスID:<%= user_overtime_attendance.id %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
+ 　　　　       <div class="center">
+   　　　        <%= f.submit "変更を送信する", class: "btn btn-lg btn-primary" %>
+            </div>
+          <% end %>
+         <!--ここまでコピペの改造-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

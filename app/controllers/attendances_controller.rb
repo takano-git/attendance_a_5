@@ -139,10 +139,22 @@ class AttendancesController < ApplicationController
     redirect_to user_url(date: params[:date]) #一応遷移した
   end
 
-
+  def edit_judgment_overtime
+    @user = User.find(params[:id])
+    @judgment_overtime_attendances = Attendance.where(overtime_authorizer_id: @user.id).where(overtime_mark: 1) 
+    judgment_overtime_attendances_id_array = []
+    @judgment_overtime_attendances.each do |judgment_overtime_attendance|
+      judgment_overtime_attendances_id_array.push(judgment_overtime_attendance.user_id)
+    end
+    # ユーザーIDが入る
+    @judgment_overtime_attendances_id_array = judgment_overtime_attendances_id_array.uniq
+  end
+  
+  def update_judgment_overtime
+  end
  
   private
-    # 1ヶ月分の勤怠情報を扱います。
+
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at, :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id])[:attendances]
     end

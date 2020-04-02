@@ -67,7 +67,7 @@
     <% end %>
     <% if @overtime_attendances.count > 0 %>
       <p>
-        <%= link_to "【残業申請のお知らせ】", attendances_change_one_month_user_path(@user), remote: true, class: "btn-notice danger-color" %>
+        <%= link_to "【残業申請のお知らせ】", attendances_edit_judgment_overtime_user_path(@user), remote: true, class: "btn-notice danger-color" %>
         <span class="visible-inline danger-color box-danger"><%= @overtime_attendances.count %>件の申請があります</span>
       </p>
     <% else %> 
@@ -122,7 +122,7 @@
         <tr>
           <th>
             <% if current_user == @user %>
-              <%= link_to "残業申請", attendances_edit_overtime_user_path(@user, overtime_attendance: day), remote: true, class: "btn btn-success" %>
+              <%= link_to "残業申請", attendances_edit_overtime_user_path(@user, overtime_attendance: day), remote: true, class: "btn btn-primary" %>
             <% end %>
           </th>
           <th><%= l(day.worked_on, format: :short) %></th>
@@ -190,3 +190,6 @@
 
 <!--残業申請モーダルウインドウ表示（申請者用）-->
 <div id="edit-overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+
+<!--残業申請モーダルウインドウ表示（上長用）-->
+<div id="edit_judgment_overtime" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
