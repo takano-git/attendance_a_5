@@ -43,19 +43,12 @@
                       <tr>
                         <td><%= l(user_overtime_attendance.worked_on, format: :short) %></td>
                         <td class="<%= css_class %>"><%= $days_of_the_week[user_overtime_attendance.worked_on.wday] %></td>
-                        <td><%= l(user_overtime_attendance.started_at, format: :hour) if user_overtime_attendance.started_at.present? %></td>
-                        <td><%= format_minute_per_fifteen(user_overtime_attendance.started_at) if user_overtime_attendance.started_at.present? %></td>
-                        <td><%= l(user_overtime_attendance.finished_at, format: :hour) if user_overtime_attendance.finished_at.present? %></td>
-                        <td><%= format_minute_per_fifteen(user_overtime_attendance.finished_at) if user_overtime_attendance.finished_at.present? %></td>
-                        <td><%= l(user_overtime_attendance.applying_started_at, format: :hour) if user_overtime_attendance.applying_started_at.present? %></td>
-                        <td><%= format_minute_per_fifteen(user_overtime_attendance.applying_started_at) if user_overtime_attendance.started_at.present? %></td>
-                        <%= uf.hidden_field :applying_started_at %>
-                        <td><%= l(user_overtime_attendance.applying_finished_at, format: :hour) if user_overtime_attendance.applying_finished_at.present? %></td>
-                        <td><%= format_minute_per_fifteen(user_overtime_attendance.applying_finished_at) if user_overtime_attendance.finished_at.present? %></td>
-                        <%= uf.hidden_field :applying_finished_at %>
-                        <td><%= user_overtime_attendance.applying_note %></td>
-                        <%= uf.hidden_field :applying_note %>
-                        <td><%= uf.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: user_overtime_attendance.overtime_mark } %></td>
+                        <td><%= l(user_overtime_attendance.overtime_finished_at, format: :time) %></td>
+                        <td><%= l(user.designated_work_end_time, format: :time) %></td>
+                                <!--小数点以下第２位までを表示させる　　　sprintf("%.2f", xxx)-->
+                        <td><%= sprintf("%.2f", (user_overtime_attendance.overtime_finished_at - user.designated_work_end_time) / 60 /60) %></td>
+                        <td><%= user_overtime_attendance.overtime_note %></td>
+                        <td><%= uf.select :overtime_mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: user_overtime_attendance.overtime_mark } %></td>
                         <!--チェックなし　０　チェックあり　１-->
                         <td><%= uf.check_box :change_checked %></td>  
                         <td><%= link_to "確認する", user_path(user_overtime_attendance.user_id), class: "btn btn-primary" %>確認用。アテンダンスID:<%= user_overtime_attendance.id %></td>
