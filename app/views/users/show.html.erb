@@ -65,6 +65,7 @@
     <% else %> 
       <p>【勤怠変更申請のお知らせ】</p>
     <% end %>
+    
     <% if @overtime_attendances.count > 0 %>
       <p>
         <%= link_to "【残業申請のお知らせ】", attendances_edit_judgment_overtime_user_path(@user), remote: true, class: "btn-notice danger-color" %>
@@ -73,6 +74,7 @@
     <% else %> 
       <p>【残業申請のお知らせ】</p>
     <% end %>
+    
   <% end %>
   <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
   <div>
@@ -151,7 +153,11 @@
           <td><%= day.instructor %></td>
           <td></td>
           <td></td>
-          <td><%= $mark_change[day.mark] %></td>
+          <td>
+            <%= $mark_change[day.mark] %>
+            <% $mark_change2 = %w{　 申請中 残業申請承認済 残業申請否認} %>
+            <%= $mark_change2[day.overtime_mark] %>
+          </td>
         </tr>
       <% end %>
     </tbody>

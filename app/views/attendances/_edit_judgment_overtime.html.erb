@@ -46,8 +46,9 @@
                         <td><%= l(user_overtime_attendance.overtime_finished_at, format: :time) %></td>
                         <td><%= l(user.designated_work_end_time, format: :time) %></td>
                                 <!--小数点以下第２位までを表示させる　　　sprintf("%.2f", xxx)-->
-                              
-                        <td><%= sprintf("%.2f", (user_overtime_attendance.overtime_finished_at - user.designated_work_end_time) / 60 /60) %></td>
+                        <!--計算用に日付を申請日に変更する-->
+                        <% calc_designated_work_end_time = user.designated_work_end_time.change(month: user_overtime_attendance.worked_on.month, day: user_overtime_attendance.worked_on.day) %>
+                        <td><%= sprintf("%.2f", (user_overtime_attendance.overtime_finished_at - calc_designated_work_end_time) / 60 /60) %></td>
                         <td><%= user_overtime_attendance.overtime_note %></td>
                         <td><%= uf.select :overtime_mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: user_overtime_attendance.overtime_mark } %></td>
                         <!--チェックなし　０　チェックあり　１-->

@@ -5,7 +5,7 @@ class ApplicationController < ActionController::Base
   $days_of_the_week = %w{日 月 火 水 木 金 土}
   $mark_status = %w{未 へ申請中 から承認済 から否認}
   $mark_change = %w{　 申請中 勤怠編集承認済 勤怠編集否認}
-  $mark_overtime = %w{残業未申請 残業申請中 残業承認済 残業否認}
+
   # beforeフィルター
     
   # paramsハッシュからユーザーを取得します。
