@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   
   $days_of_the_week = %w{日 月 火 水 木 金 土}
   $mark_status = %w{未 へ申請中 から承認済 から否認}
-  $mark_change = %w{　 申請中 勤怠編集承認済 勤怠編集否認}
+  $mark_change = %w{　 勤怠編集申請中 勤怠編集承認済 勤怠編集否認}
 
   # beforeフィルター
     

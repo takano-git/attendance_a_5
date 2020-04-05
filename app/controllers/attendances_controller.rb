@@ -140,10 +140,11 @@ class AttendancesController < ApplicationController
       # worked_onのカラム情報から日付情報をovertime_finished_atカラムに入れる
       attendance = Attendance.find(id)
       at_date = attendance.worked_on.in_time_zone
-      at_hour = attendance.overtime_finished_at.hour + 9
-      if at_hour > 24
-        at_hour -= 24
-      end
+      # at_hour = attendance.overtime_finished_at.hour + 9
+      at_hour = attendance.overtime_finished_at.hour
+      # if at_hour > 24
+      #   at_hour -= 24
+      # end
       
       at_day = at_date.day
       if params[:user][:tomorrow] == "1"
@@ -176,7 +177,9 @@ class AttendancesController < ApplicationController
     @user = User.find(params[:id])
     attendances_params.each do |id, item|
       attendance = Attendance.find(id)
-      attendance.update_attributes!(item)
+      if params[:user][:attendances][id][:change_checked] == "1"
+        attendance.update_attributes!(item)
+      end
     end
     redirect_to user_url(@user) #一応遷移した
   end
