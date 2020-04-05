@@ -131,11 +131,33 @@ class AttendancesController < ApplicationController
   
   # 残業申請の内容を保存する機能（申請の途中）
   def update_overtime
-    attendances_params.each do |id, item|
     
+    attendances_params.each do |id, item|
+      # とりあえずパラメを全部保存
       attendance = Attendance.find(id)
       attendance.update_attributes!(item)
+
+      # worked_onのカラム情報から日付情報をovertime_finished_atカラムに入れる
+      attendance = Attendance.find(id)
+      at_date = attendance.worked_on.in_time_zone
+      at_hour = attendance.overtime_finished_at.hour + 9
+      if at_hour > 24
+        at_hour -= 24
+      end
+      
+      at_day = at_date.day
+      if params[:user][:tomorrow] == "1"
+         at_day = at_date.day + 1  
+      end
+      attendance.overtime_finished_at = attendance.overtime_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_finished_at.min)
+      attendance.save
+      # if params[:user][:tomorrow] == "1"
+      #   attendance = Attendance.find(id)
+      #   attendance.overtime_finished_at = attendance.overtime_finished_at + 1.day
+      #   attendance.save
+      # end
     end
+    
     redirect_to user_url(date: params[:date]) #一応遷移した
   end
 
@@ -151,6 +173,12 @@ class AttendancesController < ApplicationController
   end
   
   def update_judgment_overtime
+    @user = User.find(params[:id])
+    attendances_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.update_attributes!(item)
+    end
+    redirect_to user_url(@user) #一応遷移した
   end
  
   private

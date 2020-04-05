@@ -46,6 +46,7 @@
                         <td><%= l(user_overtime_attendance.overtime_finished_at, format: :time) %></td>
                         <td><%= l(user.designated_work_end_time, format: :time) %></td>
                                 <!--小数点以下第２位までを表示させる　　　sprintf("%.2f", xxx)-->
+                              
                         <td><%= sprintf("%.2f", (user_overtime_attendance.overtime_finished_at - user.designated_work_end_time) / 60 /60) %></td>
                         <td><%= user_overtime_attendance.overtime_note %></td>
                         <td><%= uf.select :overtime_mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: user_overtime_attendance.overtime_mark } %></td>
