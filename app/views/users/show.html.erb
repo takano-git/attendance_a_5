@@ -77,6 +77,7 @@
     
   <% end %>
   <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
+  <%= link_to "勤怠修正ログ（承認済）", attendances_changed_logs_user_path, class: "btn btn-primary mb-20" %>
   <div>
 <% end %>
   <table class="table table-bordered table-striped table-hover" id="table-attendances">
@@ -178,7 +179,7 @@
               <%= f.hidden_field :month, :value => @first_day %>
               <%= f.hidden_field :user_id, :value => @user.id %>
               <%= f.hidden_field :id, :value => @apply.id %>
-  
+
               <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
             <% end %>
           <% end %>

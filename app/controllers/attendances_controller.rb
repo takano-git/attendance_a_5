@@ -183,7 +183,12 @@ class AttendancesController < ApplicationController
     end
     redirect_to user_url(@user) #一応遷移した
   end
- 
+
+  def changed_logs
+    @user = User.find(params[:id])
+  end
+
+
   private
 
     def attendances_params
