@@ -100,7 +100,7 @@ class AttendancesController < ApplicationController
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
         # if item[:mark] == "2" && item[:check] == "0"
-        
+
         if item[:mark] == "2" && item[:change_checked] == "1"  # 承認　全部保存されるパターン
           attendance.previous_started_at = attendance.started_at if attendance.started_at.nil?
           attendance.previous_finished_at = attendance.finished_at

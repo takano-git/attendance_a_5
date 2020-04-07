@@ -22,7 +22,7 @@ Rails.application.routes.draw do
       patch 'attendances/update_overtime' # /users/:id/attendances/update_overtime　　　　
       get 'attendances/edit_judgment_overtime'   # /users/:id/attendances/edit_judgment_overtime　　モーダルで残業申請のジャッジを編集（上長側）
       patch 'attendances/update_judgment_overtime' # /users/:id/attendances/update_judgment_overtime
-      get 'attendances/changed_logs'   # /users/:id/attendances/change_logs　　モーダルで残業申請のジャッジを編集（上長側）
+      get 'attendances/log_index'   # /users/:id/attendances/log_index　　モーダルで残業申請のジャッジを編集（上長側）
     end
     resources :attendances, only: :update  # /users/:user_id/attendances/:id 　　　　　出勤登録
     
