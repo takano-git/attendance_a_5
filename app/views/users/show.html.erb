@@ -150,8 +150,8 @@
             <% end %>
           </td>
           <td><%= day.note %></td>
-          <td><%= day.overtime_instruction %></td>
-          <td><%= day.instructor %></td>
+          <td><%= day.overtime_finished_at.hour if day.overtime_finished_at.present? %></td>
+          <td><%= day.overtime_finished_at.min if day.overtime_finished_at.present? %></td>
           <!--計算用に日付変更する-->
           <% calc_designated_work_end_time = @user.designated_work_end_time.change(month: day.worked_on.month, day: day.worked_on.day) %>
           <!--残業時間ー終了予定時間で計算-->

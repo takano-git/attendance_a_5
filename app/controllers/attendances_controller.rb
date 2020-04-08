@@ -144,7 +144,7 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       at_date = attendance.worked_on.in_time_zone
       # at_hour = attendance.overtime_finished_at.hour + 9
-      at_hour = attendance.overtime_finished_at.hour
+      at_hour = attendance.overtime_applying_finished_at.hour
       # if at_hour > 24
       #   at_hour -= 24
       # end
@@ -153,15 +153,9 @@ class AttendancesController < ApplicationController
       if params[:user][:tomorrow] == "1"
          at_day = at_date.day + 1  
       end
-      attendance.overtime_finished_at = attendance.overtime_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_finished_at.min)
+      attendance.overtime_applying_finished_at = attendance.overtime_applying_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_applying_finished_at.min)
       attendance.save
-      # if params[:user][:tomorrow] == "1"
-      #   attendance = Attendance.find(id)
-      #   attendance.overtime_finished_at = attendance.overtime_finished_at + 1.day
-      #   attendance.save
-      # end
     end
-    
     redirect_to user_url(date: params[:date]) #一応遷移した
   end
 
@@ -182,6 +176,13 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       if params[:user][:attendances][id][:change_checked] == "1"
         attendance.update_attributes!(item)
+        
+        attendance = Attendance.find(id)
+        attendance.overtime_note = attendance.overtime_applying_note
+        attendance.overtime_applying_note = ""
+        attendance.overtime_finished_at = attendance.overtime_applying_finished_at
+        attendance.overtime_applying_finished_at = ""
+        attendance.save
       end
     end
     redirect_to user_url(@user) #一応遷移した
@@ -195,7 +196,9 @@ class AttendancesController < ApplicationController
   private
 
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at, :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :tomorrow])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note,
+      :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at,
+      :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :tomorrow, :overtime_applying_finished_at, :overtime_applying_note])[:attendances]
     end
     
     

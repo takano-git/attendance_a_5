@@ -41,9 +41,9 @@
                         <tr>
                           <td><%= l(day.worked_on, format: :short) %></td>
                           <td class="<%= css_class %>"><%= $days_of_the_week[day.worked_on.wday] %></td>
-                          <td><%= af.time_field :overtime_finished_at, class: "form-control" %></td>
+                          <td><%= af.time_field :overtime_applying_finished_at, class: "form-control" %></td>
                           <td><%= f.check_box :tomorrow %></td>
-                          <td><%= af.text_field :overtime_note %></td>
+                          <td><%= af.text_field :overtime_applying_note %></td>
                           <td><%= af.collection_select(:overtime_authorizer_id, @overtime_authorizers, :id, :name , prompt: "") %></td>
                           
                               <%= af.hidden_field :user_id, :value => day.user_id %>
@@ -56,12 +56,6 @@
               <%= f.submit "変更を送信する", class: "btn btn-block btn-primary" %>
           <% end %>
          <!--ここまでコピペの改造-->
-
-
-
-
-
- 
         </div>
       </div>
     </div>

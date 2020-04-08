@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200405103637) do
+ActiveRecord::Schema.define(version: 20200408212744) do
 
   create_table "applies", force: :cascade do |t|
     t.date "month"
@@ -44,6 +44,8 @@ ActiveRecord::Schema.define(version: 20200405103637) do
     t.integer "overtime_mark", default: 0
     t.datetime "overtime_finished_at"
     t.string "overtime_note"
+    t.datetime "overtime_applying_finished_at"
+    t.string "overtime_applying_note"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
