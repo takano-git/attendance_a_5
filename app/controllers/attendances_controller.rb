@@ -31,13 +31,12 @@ class AttendancesController < ApplicationController
     @change_authorizers= User.where(superior: true ).where.not(id: @user.id)
   end
   
-  # まとめて勤怠変更の申請内容を送信する機能
+  # まとめて勤怠変更の申請内容を保存し送信する機能(申請者側)
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
-      
-        attendance = Attendance.find(id)
 
+        attendance = Attendance.find(id)
         if item[:started_at].present? && item[:finished_at].blank?
           flash[:danger] = "出社時間と退社時間を入力してください"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
@@ -45,31 +44,35 @@ class AttendancesController < ApplicationController
           if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定　:applying_started_atに入力があ理、BDのattendance.started_atがnilだったら 
               # if item[:applying_started_at] != attendance.started_at.strftime("%H:%M") 
                 attendance.mark = "1"                                                  # 申請中　のステータスをつける
-                attendance.save
+
               # end
           elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変更を想定　:applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
             if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") # trueになってしまったitem[:applying_started_at]　と　attendance.started_at が違えば
               attendance.mark = "1"                                                  # 申請中　のステータスをつける
-              attendance.save
+
             end
           elsif item[:applying_finish_at].present? && attendance.finished_at.nil?      # :applying_finish_atに入力があり、attendance.finished_atがnilだったら
               attendance.mark = "1"                                                  # 申請中　のステータスをつける
-              attendance.save
+
           elsif item[:applying_finish_at].present? && attendance.finished_at.present?      # :applying_finish_atに入力があったら
             if item[:applying_finish_at] != attendance.finished_at.strftime("%H:%M:%S.%L")      # true item[:applying_finished_at]　と　attendance.finished_at が違えば
               attendance.mark = "1"                                                  # 申請中　のステータスをつける
-              attendance.save
+
             end
           elsif item[:applying_note].present?
             if item[:applying_note] != attendance.note
               attendance.mark = "1"
-              attendance.save
+              
             end
           end
-          
-          
-          
-          attendance.update_attributes!(item)
+          attendance.save                      # attendance.mark = "1"のカラムだけ保存
+          attendance.update_attributes!(item)  # その他にも送られたカラムを保存する
+          # もし翌日チェックが入っていたら、１日たす
+          if attendances_params[id][:tomorrow] =="1"
+            attendance = Attendance.find(id)
+            attendance.applying_finished_at = attendance.applying_finished_at + 1.day
+            attendance.save
+          end
         end
       end
     end
@@ -192,7 +195,7 @@ class AttendancesController < ApplicationController
   private
 
     def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at, :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id])[:attendances]
+      params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note, :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at, :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :tomorrow])[:attendances]
     end
     
     
