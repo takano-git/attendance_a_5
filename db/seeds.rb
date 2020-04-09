@@ -19,28 +19,37 @@ User.create!(name: "上長1",
              password: "password",
              password_confirmation: "password",
              admin: false,
-             superior: true)
+             superior: true,
+             designated_work_start_time: "09:00",
+             designated_work_end_time: "18:00")
 
 User.create!(name: "上長2",
              email: "superior2@email.com",
              password: "password",
              password_confirmation: "password",
              admin: false,
-             superior: true)
+             superior: true,
+             designated_work_start_time: "09:00",
+             designated_work_end_time: "18:00")
 
 User.create!(name: "一般1",
              email: "general1@email.com",
              password: "password",
              password_confirmation: "password",
              admin: false,
-             superior: false)
+             superior: false,
+             designated_work_start_time: "09:00",
+             designated_work_end_time: "18:00")
              
 User.create!(name: "一般2",
              email: "general2@email.com",
              password: "password",
              password_confirmation: "password",
              admin: false,
-             superior: false)
+             superior: false,
+             designated_work_start_time: "09:00",
+             designated_work_end_time: "18:00")
+
 
 5.times do |n|
   name = Faker::Name.name
@@ -49,5 +58,8 @@ User.create!(name: "一般2",
   User.create(name: name,
               email: email,
               password: password,
-              password_confirmation: password)
+              password_confirmation: password,
+             designated_work_start_time: "09:00",
+             designated_work_end_time: "18:00")
+
 end
