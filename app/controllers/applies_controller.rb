@@ -28,12 +28,25 @@ class AppliesController < ApplicationController
     @apply_id_array = apply_id_array.uniq
   end
 
+  # 上長が勤怠の申請を承認・否認したものを保存する機能
   def update_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       month_params.each do |id, item|
         apply = Apply.find(id)
         if params[:user][:applies][id][:check] == "1"
           apply.update_attributes!(item)
+          
+          if apply.apply_count == 0
+            apply.apply_count = apply.apply_count + 1
+            apply.save
+            
+            apply_user_id = User.find(apply.user_id)
+            attendance = Attendance.find(apply_user_id)
+            attendance.previous_started_at = attendance.started_at
+            attendance.previous_finished_at = attendance.finished_at
+            attendance.save
+          end
+          
         end
       end
     end
