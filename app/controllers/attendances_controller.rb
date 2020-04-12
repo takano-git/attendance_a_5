@@ -1,3 +1,5 @@
+require 'date'
+
 class AttendancesController < ApplicationController
   before_action :set_user, only: [:edit_one_month, :update_one_month]
   before_action :logged_in_user, only: [:update, :edit_one_month]
@@ -41,28 +43,31 @@ class AttendancesController < ApplicationController
           flash[:danger] = "出社時間と退社時間を入力してください"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
         else
-          if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定　:applying_started_atに入力があ理、BDのattendance.started_atがnilだったら 
+          if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定 :applying_started_atに入力があ理、BDのattendance.started_atがnilだったら 
               # if item[:applying_started_at] != attendance.started_at.strftime("%H:%M") 
-                attendance.mark = "1"                                                  # 申請中　のステータスをつける
+                attendance.mark = "1"                                                  # 申請中 のステータスをつける
 
               # end
-          elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変更を想定　:applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
-            if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") # trueになってしまったitem[:applying_started_at]　と　attendance.started_at が違えば
-              attendance.mark = "1"                                                  # 申請中　のステータスをつける
-
+          elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変更を想定 :applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
+            if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") # trueになってしまったitem[:applying_started_at] と attendance.started_at が違えば
+              attendance.mark = "1"                                                  # 申請中 のステータスをつける
+            # elsif item[:applying_finished_at] != attendance.finished_at.strftime("%H:%M:%S.%L")
+            #   attendance.mark = "1" 
             end
           elsif item[:applying_finish_at].present? && attendance.finished_at.nil?      # :applying_finish_atに入力があり、attendance.finished_atがnilだったら
-              attendance.mark = "1"                                                  # 申請中　のステータスをつける
+              attendance.mark = "1"                                                  # 申請中 のステータスをつける
 
-          elsif item[:applying_finish_at].present? && attendance.finished_at.present?      # :applying_finish_atに入力があったら
-            if item[:applying_finish_at] != attendance.finished_at.strftime("%H:%M:%S.%L")      # true item[:applying_finished_at]　と　attendance.finished_at が違えば
-              attendance.mark = "1"                                                  # 申請中　のステータスをつける
-
+          elsif item[:applying_finished_at].present? && attendance.finished_at.present?      # :applying_finish_atに入力があったら
+            if item[:applying_finished_at] != attendance.finished_at.strftime("%H:%M:%S.%L")      # true item[:applying_finished_at] と attendance.finished_at が違えば
+              attendance.mark = "1"                                                  # 申請中 のステータスをつける
+            end
+          elsif attendance.started_at.present? && attendance.finished_at.present?      # 出社退社ボタンを押している日
+            if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") ||  item[:applying_finished_at] != attendance.finished_at.strftime("%H:%M:%S.%L")
+              attendance.mark = "1"    # 申請中 のステータスをつける
             end
           elsif item[:applying_note].present?
             if item[:applying_note] != attendance.note
               attendance.mark = "1"
-              
             end
           end
           attendance.save                      # attendance.mark = "1"のカラムだけ保存
@@ -83,7 +88,7 @@ class AttendancesController < ApplicationController
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
 
-  
+  # モーダル表示（勤怠変更を承認するモーダル 上長側）
   def change_one_month
     @user = User.find(params[:id])
     @change_attendances = Attendance.where(change_authorizer_id: @user.id).where(mark: 1) 
@@ -91,28 +96,60 @@ class AttendancesController < ApplicationController
     @change_attendances.each do |change_attendance|
       applicant_change_id_array.push(change_attendance.user_id)
     end
-
     @applicant_change_id_array = applicant_change_id_array.uniq
   end
   
-
-
-  # モーダルの変更申請まとめて更新機能
+  # モーダルで勤怠変更申請まとめて更新機能(上長側)
   def update_change_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
         # if item[:mark] == "2" && item[:check] == "0"
 
-        if item[:mark] == "2" && item[:change_checked] == "1"  # 承認　全部保存されるパターン
+        if item[:mark] == "2" && item[:change_checked] == "1"  # 承認 全部保存されるパターン
           attendance.previous_started_at = attendance.started_at if attendance.started_at.nil?
           attendance.previous_finished_at = attendance.finished_at
           attendance.started_at = item[:applying_started_at]
           attendance.finished_at = item[:applying_finished_at]
           attendance.note = item[:applying_note]
           attendance.mark = item[:mark]
+          attendance.previous_finished_at = attendance.finished_at
+          attendance.attendance_changed = true
+          attendance.approval_date = Date.today
           attendance.save
-        elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認　マークのみ保存し後は保存しない
+          
+          
+          # ここに機能を追加（ログ表示の為の）
+          
+          # 申請者の申請月のアプライを取ってくる。１個しかないはず。。。
+
+          
+          # range = Date.yesterday.beginning_of_day..Date.yesterday.end_of_day
+          # User.where(created_at: range)
+          
+          
+          target_month = Date.today.change(month: attendance.worked_on.month) #  => Sun, 12 Apr 2020 
+          
+          range = target_month.beginning_of_month..target_month.end_of_month
+          applies = Apply.where(user_id: attendance.user_id).where(month: range)
+          
+          applies.each do |apply|
+            if apply.apply_count == 0
+              # 1ヶ月の勤怠を上長に申請するボタンを押した時にprevious_started_atなどに値を入れる
+              attendances = Attendance.where(worked_on: apply.month)
+              attendances.each do |attendance|
+                attendance.previous_started_at = attendance.started_at
+                attendance.previous_finished_at = attendance.finished_at
+                attendance.save
+              end
+              apply.apply_count = apply.apply_count + 1
+              apply.save
+            end
+          end
+
+          
+          
+        elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認 マークのみ保存し後は保存しない
           attendance.mark = item[:mark]
           attendance.save
         end
@@ -176,7 +213,8 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       if params[:user][:attendances][id][:change_checked] == "1"
         attendance.update_attributes!(item)
-        
+
+        # 
         attendance = Attendance.find(id)
         attendance.overtime_note = attendance.overtime_applying_note
         attendance.overtime_applying_note = ""
@@ -188,8 +226,9 @@ class AttendancesController < ApplicationController
     redirect_to user_url(@user) #一応遷移した
   end
 
-  def changed_logs
+  def log_index
     @user = User.find(params[:id])
+    @logs = Attendance.where(user_id: @user.id).where(attendance_changed: true)
   end
 
 
@@ -198,7 +237,8 @@ class AttendancesController < ApplicationController
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note,
       :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at,
-      :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :tomorrow, :overtime_applying_finished_at, :overtime_applying_note])[:attendances]
+      :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :tomorrow, :overtime_applying_finished_at,
+      :attendance_changed, :overtime_applying_note])[:attendances]
     end
     
     

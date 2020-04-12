@@ -16,24 +16,23 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
+      <% if @logs.count > 0 %>
+        <% @logs.each do |log| %>
+        <tr>
+          <td><%= l(log.worked_on, format: :short) %></td>
+          <td><%= log.previous_started_at %></td>
+          <td><%= log.previous_finished_at %></td>
+          <td><%= log.started_at %></td>
+          <td><%= log.finished_at %></td>
+          <% target_id = log.change_authorizer_id %>
+          <!--めちゃくちゃいっぱい取れててエラーになるのか？-->
+          <% target_user = User.find_by(id: target_id) %>
+          <% user_name = target_user.name %>
+          <td><%= user_name if user_name.present? %></td>
+          <td><%= log.approval_date %></td>
+        </tr>
+        <% end %>
+      <% end %>
     </tbody>
 
   </table>

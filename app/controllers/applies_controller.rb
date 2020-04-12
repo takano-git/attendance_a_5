@@ -36,17 +36,18 @@ class AppliesController < ApplicationController
         if params[:user][:applies][id][:check] == "1"
           apply.update_attributes!(item)
           
-          if apply.apply_count == 0
-            apply.apply_count = apply.apply_count + 1
-            apply.save
+          # if apply.apply_count == 0
+          #   apply.apply_count = apply.apply_count + 1
+          #   apply.save
             
-            apply_user_id = User.find(apply.user_id)
-            attendance = Attendance.find(apply_user_id)
-            attendance.previous_started_at = attendance.started_at
-            attendance.previous_finished_at = attendance.finished_at
-            attendance.save
-          end
-          
+          #   # 1ヶ月の勤怠を上長に申請するボタンを押した時にprevious_started_atなどに値を入れる
+          #   attendances = Attendance.where(worked_on: apply.month)
+          #   attendances.each do |attendance|
+          #     attendance.previous_started_at = attendance.started_at
+          #     attendance.previous_finished_at = attendance.finished_at
+          #     attendance.save
+          #   end
+          # end
         end
       end
     end
