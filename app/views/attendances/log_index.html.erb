@@ -24,11 +24,7 @@
           <td><%= log.previous_finished_at %></td>
           <td><%= log.started_at %></td>
           <td><%= log.finished_at %></td>
-          <% target_id = log.change_authorizer_id %>
-          <!--めちゃくちゃいっぱい取れててエラーになるのか？-->
-          <% target_user = User.find_by(id: target_id) %>
-          <% user_name = target_user.name %>
-          <td><%= user_name if user_name.present? %></td>
+          <td><%= log.change_authorizer_id %>確認用アテンダンスID:<%= log.id %></td>
           <td><%= log.approval_date %></td>
         </tr>
         <% end %>

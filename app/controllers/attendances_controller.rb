@@ -33,7 +33,7 @@ class AttendancesController < ApplicationController
     @change_authorizers= User.where(superior: true ).where.not(id: @user.id)
   end
   
-  # まとめて勤怠変更の申請内容を保存し送信する機能(申請者側)
+  # 1ヶ月の勤怠変更の申請内容を保存し送信する機能(申請者側)
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
@@ -105,8 +105,8 @@ class AttendancesController < ApplicationController
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
         # if item[:mark] == "2" && item[:check] == "0"
-
-        if item[:mark] == "2" && item[:change_checked] == "1"  # 承認 全部保存されるパターン
+      
+        if item[:mark] == "2" && item[:change_checked] == "1"  # 承認 全部保存されるパターン　:mark == "2"承認　＆＆ change_checked] == "1" 変更
           attendance.previous_started_at = attendance.started_at if attendance.started_at.nil?
           attendance.previous_finished_at = attendance.finished_at
           attendance.started_at = item[:applying_started_at]
@@ -119,15 +119,7 @@ class AttendancesController < ApplicationController
           attendance.save
           
           
-          # ここに機能を追加（ログ表示の為の）
-          
-          # 申請者の申請月のアプライを取ってくる。１個しかないはず。。。
-
-          
-          # range = Date.yesterday.beginning_of_day..Date.yesterday.end_of_day
-          # User.where(created_at: range)
-          
-          
+          # ここにログ表示の為の機能を追加（apply_countにカウント１をつける）。カウントが付いているものはログ表示対象。申請者の申請月のアプライを取ってくる。１個しかないはず。。。
           target_month = Date.today.change(month: attendance.worked_on.month) #  => Sun, 12 Apr 2020 
           
           range = target_month.beginning_of_month..target_month.end_of_month
@@ -146,9 +138,6 @@ class AttendancesController < ApplicationController
               apply.save
             end
           end
-
-          
-          
         elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認 マークのみ保存し後は保存しない
           attendance.mark = item[:mark]
           attendance.save
@@ -229,6 +218,16 @@ class AttendancesController < ApplicationController
   def log_index
     @user = User.find(params[:id])
     @logs = Attendance.where(user_id: @user.id).where(attendance_changed: true)
+      # if @logs.count > 0 
+      #   @logs.each do |log|
+      #     target_id = log.change_authorizer_id
+      #     target_user = User.find_by(id: target_id)
+      #     user_name = target_user.name
+          
+      #     user_name.present? 
+          
+      #   end
+      # end
   end
 
 
