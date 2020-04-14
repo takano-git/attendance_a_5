@@ -3,6 +3,16 @@
 
 <div>
   <h1>勤怠ログ</h1>
+
+  <!--ここから先が検索機能の実装部-->
+  <%= form_with url:'/attendances_log_index_user_path', method: :get, local: true do |f| %>
+    <%= f.select :selected_year, [['2019年', 2019],['2020年', 2020]], { include_blank: true, selected: 2020 }, { class: "form-control" } %>
+    <%= f.select :selected_month, [['1月', 1],['2月', 2]], { include_blank: true, selected: 1 }, { class: "form-control" } %>
+    <%= f.submit '検索', { class: "form-control" } %>
+  <% end %>
+  <!--ここまで-->
+  
+  
   <table class="table table-bordered table-condensed user-table">
     <thead>
       <tr>
@@ -16,16 +26,16 @@
       </tr>
     </thead>
     <tbody>
-      <% if @logs.count > 0 %>
-        <% @logs.each do |log| %>
+      <% if @attendances.count > 0 %>
+        <% @attendances.each do |attendance| %>
         <tr>
-          <td><%= l(log.worked_on, format: :short) %></td>
-          <td><%= log.previous_started_at %></td>
-          <td><%= log.previous_finished_at %></td>
-          <td><%= log.started_at %></td>
-          <td><%= log.finished_at %></td>
-          <td><%= log.change_authorizer_id %>確認用アテンダンスID:<%= log.id %></td>
-          <td><%= log.approval_date %></td>
+          <td><%= l(attendance.worked_on, format: :short) %></td>
+          <td><%= attendance.previous_started_at %></td>
+          <td><%= attendance.previous_finished_at %></td>
+          <td><%= attendance.started_at %></td>
+          <td><%= attendance.finished_at %></td>
+          <td><%= attendance.change_authorizer_id %>確認用アテンダンスID:<%= attendance.id %></td>
+          <td><%= attendance.approval_date %></td>
         </tr>
         <% end %>
       <% end %>

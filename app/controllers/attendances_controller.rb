@@ -217,7 +217,7 @@ class AttendancesController < ApplicationController
 
   def log_index
     @user = User.find(params[:id])
-    @logs = Attendance.where(user_id: @user.id).where(attendance_changed: true)
+    @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true)
       # if @logs.count > 0 
       #   @logs.each do |log|
       #     target_id = log.change_authorizer_id
