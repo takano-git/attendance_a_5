@@ -217,17 +217,13 @@ class AttendancesController < ApplicationController
 
   def log_index
     @user = User.find(params[:id])
-    @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true)
-      # if @logs.count > 0 
-      #   @logs.each do |log|
-      #     target_id = log.change_authorizer_id
-      #     target_user = User.find_by(id: target_id)
-      #     user_name = target_user.name
-          
-      #     user_name.present? 
-          
-      #   end
-      # end
+    # @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true)
+   
+    if params[:selected_year] || params[:selected_month]
+      @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true).where('worked_on LIKE ?', "%#{params[:selected_year]}%").where('worked_on LIKE ?', "%#{params[:selected_month]}%")
+    else
+      @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true)
+    end
   end
 
 
