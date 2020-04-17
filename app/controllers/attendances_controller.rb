@@ -217,10 +217,17 @@ class AttendancesController < ApplicationController
 
   def log_index
     @user = User.find(params[:id])
-    # @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true)
-   
+    searchmonth = ""
+    if params[:selected_month] == "1" || params[:selected_month] == "2" || params[:selected_month] == "3" || params[:selected_month] == "4" || params[:selected_month] == "5" || params[:selected_month] == "6" || params[:selected_month] == "7" || params[:selected_month] == "8" || params[:selected_month] == "9"
+      searchmonth = "0" + params[:selected_month] #04()
+    end
+
+
     if params[:selected_year] || params[:selected_month]
-      @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true).where('worked_on LIKE ?', "%#{params[:selected_year]}%").where('worked_on LIKE ?', "%#{params[:selected_month]}%")
+      searchword = params[:selected_year] + "-" + searchmonth
+      # searchword = params[:selected_year] + "-" + params[:selected_month] +"-"
+      # @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true).where('worked_on LIKE ?', "%#{params[:selected_year]}%").where('worked_on LIKE ?', "%#{params[:selected_month]}%")
+      @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true).where('worked_on LIKE ?', "#{searchword}%") #前方一致
     else
       @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true)
     end
