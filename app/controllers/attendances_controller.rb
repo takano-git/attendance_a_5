@@ -225,8 +225,6 @@ class AttendancesController < ApplicationController
 
     if params[:selected_year] || params[:selected_month]
       searchword = params[:selected_year] + "-" + searchmonth
-      # searchword = params[:selected_year] + "-" + params[:selected_month] +"-"
-      # @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true).where('worked_on LIKE ?', "%#{params[:selected_year]}%").where('worked_on LIKE ?', "%#{params[:selected_month]}%")
       @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true).where('worked_on LIKE ?', "#{searchword}%") #前方一致
     else
       @attendances = Attendance.where(user_id: @user.id).where(attendance_changed: true)
@@ -242,7 +240,6 @@ class AttendancesController < ApplicationController
       :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :tomorrow, :overtime_applying_finished_at,
       :attendance_changed, :overtime_applying_note])[:attendances]
     end
-    
     
     # 管理権限者、または現在ログインしているユーザーを許可します。
     def admin_or_correct_user
