@@ -241,7 +241,7 @@ class AttendancesController < ApplicationController
     # 管理権限者、または現在ログインしているユーザーを許可します。
     def admin_or_correct_user
       @user = User.find(params[:user_id]) if @user.blank?
-      # @user = User.find(params[:id]) if @user.blank?
+
       unless current_user?(@user) || current_user.admin?
         flash[:danger] = "編集権限がありません。"
         redirect_to(root_url)

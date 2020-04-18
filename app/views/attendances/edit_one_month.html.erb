@@ -1,8 +1,8 @@
 <% provide(:title, @user.name) %>
 
-<% def changed %>
-  <% %>
-<% end %>
+<!--<% def changed %>-->
+<!--  <% %>-->
+<!--<% end %>-->
 
 <%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
   <div>
