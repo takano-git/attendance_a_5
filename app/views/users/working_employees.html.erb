@@ -1,0 +1,23 @@
+<% provide(:title, '出勤中社員一覧') %>
+
+<div class = "mt-50">
+    <h1>出勤中社員一覧</h1>
+    <% if @working_employees_ids.count > 0 %>
+      <table class="table table-bordered table-condensed user-table table-text-center">
+        <tr>
+          <th><%= User.human_attribute_name(:employee_number) %></th>
+          <th><%= User.human_attribute_name(:name) %></th>
+        </tr>
+          <% @working_employees_ids.each do |id| %>
+            <% employee = User.find(id) %>
+            <tr>
+              <td><%= employee.employee_number %></td>
+              <td><%= employee.name %></td>
+            </tr>
+          <% end %>
+      </table>
+    <% else %>
+      <p>現在、出勤中の社員はいません。</p>
+    <% end %>
+</div>
+

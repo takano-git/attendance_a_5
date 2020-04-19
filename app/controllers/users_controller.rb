@@ -89,6 +89,16 @@ class UsersController < ApplicationController
     end
   end
 
+  def working_employees
+    attendances = Attendance.where.not(started_at: nil).where(finished_at: nil)
+    working_employees_ids = []
+    attendances.each do |attendance|
+      working_employees_ids.push(attendance.user_id)
+    end
+    @working_employees_ids = working_employees_ids
+  end
+
+
   private
 
     def user_params
