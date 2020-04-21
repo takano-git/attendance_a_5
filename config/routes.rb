@@ -6,7 +6,11 @@ Rails.application.routes.draw do
   get    '/login', to: 'sessions#new'
   post   '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
-
+  
+  # 拠点
+  resources :offices, only: [:index, :create, :update, :destroy]
+  
+  
   resources :users do
     collection { post :import }
     member do

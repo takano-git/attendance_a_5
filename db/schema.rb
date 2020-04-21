@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200410230236) do
+ActiveRecord::Schema.define(version: 20200419212008) do
 
   create_table "applies", force: :cascade do |t|
     t.date "month"
@@ -50,6 +50,13 @@ ActiveRecord::Schema.define(version: 20200410230236) do
     t.boolean "attendance_changed", default: false
     t.date "approval_date"
     t.index ["user_id"], name: "index_attendances_on_user_id"
+  end
+
+  create_table "offices", force: :cascade do |t|
+    t.string "name"
+    t.string "office_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
