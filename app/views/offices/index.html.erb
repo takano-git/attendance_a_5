@@ -22,7 +22,11 @@
         			  </a>
         		  </h3>
             </td>
-            <td></td>
+            <td>
+              <%= link_to "削除", office, method: :delete,
+		    	    data: { confirm: "削除してよろしいですか？" },
+		    	    class:"btn btn-primary" %>
+            </td>
             <td><%= office.id %></td>
             <td><%= office.name %></td>
             <td><%= office.office_type %></td>

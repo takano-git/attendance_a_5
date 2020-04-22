@@ -5,7 +5,8 @@ class OfficesController < ApplicationController
   before_action :admin_user, only: [:index, :create, :update, :destroy]
 
   def index
-   @offices = Office.all
+   @offices = Office.all   # 一覧表示用
+   @office = Office.new    # 新規作成用
   end
   
   def create
@@ -32,6 +33,10 @@ class OfficesController < ApplicationController
   end
   
   def destroy
+    @office = Office.find(params[:id])
+    @office.destroy
+    flash[:success] = "#{@office.name}のデータを削除しました。"
+    redirect_to offices_url
   end
   
   
