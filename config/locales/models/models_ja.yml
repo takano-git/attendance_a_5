@@ -32,4 +32,8 @@ ja:
         apply:
           month: 月
           mark: 指示者確認㊞
+        office:
+          id: 拠点番号
+          name: 拠点名
+          office_type: 拠点種類
       

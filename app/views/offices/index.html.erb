@@ -1,9 +1,10 @@
-<% provide(:title, '出勤中社員一覧') %>
+<% provide(:title, '拠点情報の修正') %>
 <% provide(:class_text, 'user--edit') %>
 <% provide(:button_text, '更新する') %>
+<% provide(:button_text2, '追加する') %>
 
 <div class = "mt-50">
-  <h1>出勤中社員一覧</h1>
+  <h1>拠点情報の修正</h1>
   <% if @offices.count > 0 %>
     <table class="table table-bordered table-condensed user-table table-text-center">
       <tr>
@@ -67,11 +68,12 @@
 		<div id="AccordionCollapse" class="panel-collapse collapse">
 		  <div class="panel-body">
         <%= form_with(model: @office, local:true) do |f| %>
+          <%= render 'shared/error_office_messages', object: @office %>
           <%= f.label :name, class: "label-#{yield(:class_text)}" %>
           <%= f.text_field :name, class: "form-control" %>
           <%= f.label :office_type, class: "label-#{yield(:class_text)}" %>
           <%= f.text_field :office_type, class: "form-control" %>
-          <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
+          <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text2)}" %>
         <% end %>
 		  </div>
 		</div>

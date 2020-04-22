@@ -1,7 +1,5 @@
 class OfficesController < ApplicationController
-  # before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :logged_in_user, only: [:index, :create, :update, :destroy]
-  # before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:index, :create, :update, :destroy]
 
   def index
@@ -10,14 +8,14 @@ class OfficesController < ApplicationController
   end
   
   def create
-   @office = Office.new(office_params)
+    @office = Office.new(office_params)
    
     if @office.save
-       flash[:success] = "新しい拠点を登録しました。"
-       redirect_to offices_url
+      flash[:success] = "新しい拠点を登録しました。"
+      redirect_to offices_url
     else
-       flash[:danger] = "拠点の登録に失敗しました。"
-       render index
+      flash[:danger] = "拠点の登録に失敗しました。"
+      redirect_to offices_url
     end
   end
   
