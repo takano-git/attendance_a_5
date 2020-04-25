@@ -106,15 +106,31 @@ class UsersController < ApplicationController
     # users = User.where(town_id: params[:id]) users => @attendances
     # town = Town.find(params[:id])            town =>  @user
     #ファイル名を指定 ここはお好みで
-    filename = @user.name + Date.current.strftime("%Y%m%d")
+    # filename = @user.name + Date.current.strftime("%Y%m%d")
+    filename = @user.name + "　" +  l(@first_day, format: :middle) + "勤怠"
+    #日本語のカラム名を用意
+    columns_ja = ["日付", "出勤", "退勤"]
+    
+    columns = ["worked_on", "started_at", "finished_at"]
 
     csv1 = CSV.generate do |csv|
       #カラム名を1行目として入れる
-      csv << Attendance.column_names
+      # csv << Attendance.column_names   これだと全てのカラムが出力されてしまう
+      # csv_column_names = %w(worked_on started_at finished_at)
+      # csv_column_names = %w(worked_on started_at finished_at)
+      # csv << csv_column_names   # 表の列に入る名前を定義します。
 
+      csv << columns_ja
       @attendances.each do |attendance|
         #各行の値を入れていく
-        csv << attendance.attributes.values_at(*Attendance.column_names)
+        # csv << attendance.attributes.values_at(*Attendance.column_names)
+        column_values = [
+          attendance.worked_on,
+          attendance.started_at.try(:strftime,"%H:%M"),
+          attendance.finished_at.try(:strftime,"%H:%M")
+        ]
+        csv << column_values   #表の行に入る値を定義します。
+        # csv << attendance.attributes.values_at(*columns)
       end
     end
     create_csv(filename, csv1)
