@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   resources :users do
     collection { post :import }
     member do
+      get 'export_csv_attendance'          # /users/:id/export_csv_attendance          ユーザー一人分の勤怠をcsv出力
       get 'edit_basic_info'                # /users/:id/edit_basic_info　　　　　　　　ユーザーの基本情報編集
       patch 'update_basic_info'            # /users/:id/update_basic_info　　　　　　　
       get 'attendances/edit_one_month'     # /users/:id/attendances/edit_one_month　　　1ヶ月の勤怠をまとめて編集画面

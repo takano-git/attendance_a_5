@@ -1,10 +1,12 @@
+require "csv"
+
 class UsersController < ApplicationController
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :export_csv_attendance]
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :working_employees]
   before_action :not_admin_user, only: :show
-  before_action :set_one_month, only: :show
+  before_action :set_one_month, only: [:show, :export_csv_attendance]
   before_action :set_apply_month, only: :show
 
   def index
@@ -97,7 +99,39 @@ class UsersController < ApplicationController
     @working_employees_ids = working_employees_ids
   end
 
+
+  def export_csv_attendance
+    head :no_content
+
+    # users = User.where(town_id: params[:id]) users => @attendances
+    # town = Town.find(params[:id])            town =>  @user
+    #ファイル名を指定 ここはお好みで
+    filename = @user.name + Date.current.strftime("%Y%m%d")
+
+    csv1 = CSV.generate do |csv|
+      #カラム名を1行目として入れる
+      csv << Attendance.column_names
+
+      @attendances.each do |attendance|
+        #各行の値を入れていく
+        csv << attendance.attributes.values_at(*Attendance.column_names)
+      end
+    end
+    create_csv(filename, csv1)
+  end
+
+
   private
+
+    def create_csv(filename, csv1)
+      #ファイル書き込み
+      File.open("./#{filename}.csv", "w", encoding: "SJIS") do |file|
+        file.write(csv1)
+      end
+      #send_fileを使ってCSVファイル作成後に自動でダウンロードされるようにする
+      stat = File::stat("./#{filename}.csv")
+      send_file("./#{filename}.csv", filename: "#{filename}.csv", length: stat.size)
+    end
 
     def user_params
       params.require(:user).permit(:name, :email, :department,:password, :password_confirmation)
