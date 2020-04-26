@@ -10,7 +10,6 @@ Rails.application.routes.draw do
   # 拠点
   resources :offices, only: [:index, :create, :update, :destroy]
   
-  
   resources :users do
     collection { post :import }
     member do
@@ -29,6 +28,7 @@ Rails.application.routes.draw do
       patch 'attendances/update_judgment_overtime' # /users/:id/attendances/update_judgment_overtime
       get 'attendances/log_index'   # /users/:id/attendances/log_index　　　　　　　　　モーダルで残業申請のジャッジを編集（上長側）
       get 'working_employees'       # /users/:id/working_employees　　　　　　　　　　　出勤中社員一覧
+      get 'edit_system_info'  # /users/:id/edit_system_info
     end
     resources :attendances, only: :update  # /users/:user_id/attendances/:id 　　　　　出勤登録
     

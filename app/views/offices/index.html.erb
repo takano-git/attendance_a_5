@@ -39,7 +39,7 @@
             		<div class="panel-body">
                   <%= form_with(model: office, url: office_path(office), local: true) do |f| %>
 
-                    <%= f.label :name, class: "label-#{yield(:class_text)}" %>
+                    <%= f.label :name, class: "label-#{yield(:class_text)}" %><span>　</span><span class="label label-danger">必須</span>
                     <%= f.text_field :name, class: "form-control" %>
                     <%= f.label :office_type, class: "label-#{yield(:class_text)}" %>
                     <%= f.text_field :office_type, class: "form-control" %>
@@ -69,7 +69,7 @@
 		  <div class="panel-body">
         <%= form_with(model: @office, local:true) do |f| %>
           <%= render 'shared/error_office_messages', object: @office %>
-          <%= f.label :name, class: "label-#{yield(:class_text)}" %>
+          <%= f.label :name, class: "label-#{yield(:class_text)}" %><span>　</span><span class="label label-danger">必須</span>
           <%= f.text_field :name, class: "form-control" %>
           <%= f.label :office_type, class: "label-#{yield(:class_text)}" %>
           <%= f.text_field :office_type, class: "form-control" %>

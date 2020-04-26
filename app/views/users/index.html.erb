@@ -3,17 +3,19 @@
 <% provide(:button_text, '編集する') %>
 <h1>ユーザー一覧</h1>
 <div class="row">
-  <div class="col-md-4">
-	<%= form_tag import_users_path, multipart: true do %>
-	  <%= file_field_tag :file %>
-	  <%= submit_tag "CSVをインポート", class: "btn btn-primary btn-block"  %>
-	<% end %>
+	<div class="col-md-11">
+	  <div class="col-md-3 mb-50">
+		<%= form_tag import_users_path, multipart: true do %>
+		  <%= file_field_tag :file %>
+		  <%= submit_tag "CSVをインポート", class: "btn btn-primary btn-block"  %>
+		<% end %>
+  </div>
   </div>
 </div>
 
 
 <div class="row">
-  <div class="col-md-11 col-md-offset-1">
+  <div class="col-md-10 col-md-offset-1">
 	<% @users.each do |user| %>
 	    <div><%= user.name %></div>
 	    
