@@ -136,6 +136,8 @@ class UsersController < ApplicationController
     create_csv(filename, csv1)
   end
 
+  def edit_system_info
+  end
 
   private
 
