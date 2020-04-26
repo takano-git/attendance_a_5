@@ -6,9 +6,9 @@
 
   <!--ここから先が検索機能の実装部-->
   <%= form_with url: attendances_log_index_user_path, method: :get, local: true do |f| %>
-    <%= f.select :selected_year, [['2019年', 2019],['2020年', 2020]], { include_blank: true}, { class: "form-control btn-mormal" } %>
-    <%= f.select :selected_month, [['1月', 1], ['2月', 2], ['3月', 3], ['4月', 4], ['5月', 5], ['6月', 6], ['7月', 7], ['8月', 8], ['9月', 9], ['10月', 10], ['11月', 11],['12月', 12]], { include_blank: true}, { class: "form-control btn-mormal" } %>
-    <%= f.submit '検索', { class: "form-control btn-mormal" } %>
+    <%= f.select :selected_year, [['2019年', 2019],['2020年', 2020]], { include_blank: true}, { class: "form-control width-100" } %>
+    <%= f.select :selected_month, [['1月', 1], ['2月', 2], ['3月', 3], ['4月', 4], ['5月', 5], ['6月', 6], ['7月', 7], ['8月', 8], ['9月', 9], ['10月', 10], ['11月', 11],['12月', 12]], { include_blank: true}, { class: "form-control width-100" } %>
+    <%= f.submit '検索', { class: "form-control btn-primary mb-20 width-100" } %>
   <% end %>
   <!--ここまで-->
   

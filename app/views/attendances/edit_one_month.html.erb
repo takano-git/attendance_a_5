@@ -1,16 +1,7 @@
 <% provide(:title, @user.name) %>
 
-<!--<% def changed %>-->
-<!--  <% %>-->
-<!--<% end %>-->
-
 <%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
   <div>
-確認用@change_authorizers (Userモデルのオブジェクトが入っているよ。)
-<% @change_authorizers.each do |change_authorizer| %>
-  <%= change_authorizer.id %>
-<% end %>
-    
     <table class="table table-bordered table-condensed table-hover" id="table-attendances">
       <thead>
         <tr>

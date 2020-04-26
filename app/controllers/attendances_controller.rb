@@ -43,7 +43,7 @@ class AttendancesController < ApplicationController
           flash[:danger] = "出社時間と退社時間を入力してください"
           redirect_to attendances_edit_one_month_user_url(date: params[:date]) and return
         else
-          if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定 :applying_started_atに入力があ理、BDのattendance.started_atがnilだったら 
+          if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定 :applying_started_atに入力がある、BDのattendance.started_atがnilだったら 
               # if item[:applying_started_at] != attendance.started_at.strftime("%H:%M") 
                 attendance.mark = "1"                                                  # 申請中 のステータスをつける
 
@@ -51,8 +51,6 @@ class AttendancesController < ApplicationController
           elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変更を想定 :applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
             if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") # trueになってしまったitem[:applying_started_at] と attendance.started_at が違えば
               attendance.mark = "1"                                                  # 申請中 のステータスをつける
-            # elsif item[:applying_finished_at] != attendance.finished_at.strftime("%H:%M:%S.%L")
-            #   attendance.mark = "1" 
             end
           elsif item[:applying_finish_at].present? && attendance.finished_at.nil?      # :applying_finish_atに入力があり、attendance.finished_atがnilだったら
               attendance.mark = "1"                                                  # 申請中 のステータスをつける
@@ -160,7 +158,7 @@ class AttendancesController < ApplicationController
   
   # 残業申請の内容を保存する機能（申請の途中）
   def update_overtime
-    
+    debugger
     attendances_params.each do |id, item|
       # とりあえずパラメを全部保存
       attendance = Attendance.find(id)

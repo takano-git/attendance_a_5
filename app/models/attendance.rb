@@ -30,7 +30,7 @@ class Attendance < ApplicationRecord
   
   # 追加バリデーション
   def applying_started_at_than_applying_finished_at_if_invalid
-    if applying_started_at.present? && applying_finished_at.present?
+    if applying_started_at.present? && applying_finished_at.present? && change_authorizer_id.present?
       errors.add(:applying_started_at, "より早い退勤時間は無効です") if applying_started_at > applying_finished_at
     end
   end
