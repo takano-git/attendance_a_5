@@ -8,8 +8,6 @@
       </button>
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
-          <p>ここにテーブルかく</p>
-          
           <!--ここからコピぺの改造-->
           <%= form_with(model: @user, url: attendances_update_overtime_user_path(@user), local: true, method: :patch) do |f| %>
               <h2>【残業申請】</h2>
@@ -21,7 +19,7 @@
                       <th>終了予定時間</th>
                       <th>翌日</th>
                       <th>業務処理内容</th>
-                      <th>指示者確認印</th>
+                      <th>指示者確認㊞</th>
                     </tr>
                   </thead>
                 <tbody>

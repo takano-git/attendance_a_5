@@ -1,9 +1,6 @@
 <% provide(:title, @user.name) %>
 <% provide(:class_text, 'user--edit') %>
 <% provide(:button_text, '申請する') %>
-確認用@apply.month:<%= @apply.month %><br>
-確認用@apply.id:<%= @apply.id %><br>
-確認用@first_day:<%= @first_day %><br>
 <div>
   <table class="table table-bordered table-condensed user-table">
     <tr>
@@ -160,8 +157,8 @@
           <td><%= day.overtime_note %></td>
           <td>
             <%= $mark_change[day.mark] %>
-            <% $mark_change2 = %w{　 申請中 残業申請承認済 残業申請否認} %>
-            <%= $mark_change2[day.overtime_mark] %>
+            <% $mark_change2 = %w{　 残業申請中 残業申請承認済 残業申請否認} %>
+            <%= User.find(day.overtime_authorizer_id).name if day.overtime_authorizer_id.present? %><span>　</span><%= $mark_change2[day.overtime_mark] %>
           </td>
         </tr>
       <% end %>

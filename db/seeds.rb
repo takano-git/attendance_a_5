@@ -51,15 +51,15 @@ User.create!(name: "一般2",
              designated_work_end_time: "18:00")
 
 
-5.times do |n|
-  name = Faker::Name.name
-  email ="sample-#{n+1}@email.com"
-  password = "password"
-  User.create(name: name,
-              email: email,
-              password: password,
-              password_confirmation: password,
-             designated_work_start_time: "09:00",
-             designated_work_end_time: "18:00")
+# 5.times do |n|
+#   name = Faker::Name.name
+#   email ="sample-#{n+1}@email.com"
+#   password = "password"
+#   User.create(name: name,
+#               email: email,
+#               password: password,
+#               password_confirmation: password,
+#             designated_work_start_time: "09:00",
+#             designated_work_end_time: "18:00")
 
-end
+# end
