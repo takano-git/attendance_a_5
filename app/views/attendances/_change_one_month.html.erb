@@ -9,22 +9,6 @@
       </button>
       <div class="row">
         <div class="col-md-10 col-md-offset-1">
-          <!--ここから確認用表示-->
-          <p>これは変更申請の上長側のモーダル</p>
-          <p>@change_attendances確認用</p>
-          <% @change_attendances.each do |change_attendance| %>
-            <span>change_attendance.change_authorizer_id,</span>
-            <%= change_attendance.change_authorizer_id %>
-            <span>@user.id</span>
-            <%= @user.id %>
-            <br>
-          <% end %>
-          
-          <% @applicant_change_id_array.each do |applicant_change_id| %>
-            <br>
-            【確認用】申請者　applicant_change_id:<%= applicant_change_id %>
-          <% end %>
-          <!--ここまで確認用表示-->
           <!--ここからコピぺの改造-->
           <%= form_with(model: @user, url: attendances_update_change_one_month_user_path, local: true, method: :patch) do |f| %>
             <% @applicant_change_id_array.each do |applicant_change_id_array| %>

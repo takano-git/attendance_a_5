@@ -46,36 +46,32 @@
 <% if current_user == @user %>
   <% if current_user.superior %>
     <% if @applies.count > 0 %>
-      <p>
-        <%= link_to "【所属長承認申請のお知らせ】", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn-notice danger-color" %>
-        <span class="visible-inline danger-color box-danger"><%= @applies.count %>件の申請があります</span>
-      </p>
-      
+      <P class="danger-color">
+        【所属長承認申請のお知らせ】<span class="visible-inline danger-color box-danger"><%= link_to "#{@applies.count}件の申請があります", applies_edit_month_user_path(@user, @applies), remote: true, class: "btn-notice danger-color" %></span>
+      </P>
     <% else %>
       <P>【所属長承認申請のお知らせ】</P>
     <% end %>
     <% if @change_attendances.count > 0 %>
-      <p>
-        <%= link_to "【勤怠変更申請のお知らせ】", attendances_change_one_month_user_path(@user), remote: true, class: "btn-notice danger-color" %>
-        <span class="visible-inline danger-color box-danger"><%= @change_attendances.count %>件の申請があります</span>
+      <p class="danger-color">
+        【勤怠変更申請のお知らせ】<span class="visible-inline danger-color box-danger"><%= link_to "#{@change_attendances.count}件の申請があります", attendances_change_one_month_user_path(@user), remote: true, class: "btn-notice danger-color" %></span>
       </p>
     <% else %> 
       <p>【勤怠変更申請のお知らせ】</p>
     <% end %>
     
     <% if @overtime_attendances.count > 0 %>
-      <p>
-        <%= link_to "【残業申請のお知らせ】", attendances_edit_judgment_overtime_user_path(@user), remote: true, class: "btn-notice danger-color" %>
-        <span class="visible-inline danger-color box-danger"><%= @overtime_attendances.count %>件の申請があります</span>
+      <p class="danger-color">
+        【残業申請のお知らせ】<span class="visible-inline danger-color box-danger"><%= link_to "#{@overtime_attendances.count}件の申請があります", attendances_edit_judgment_overtime_user_path(@user), remote: true, class: "btn-notice danger-color" %></span>
       </p>
     <% else %> 
       <p>【残業申請のお知らせ】</p>
     <% end %>
     
   <% end %>
-  <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary mb-20" %>
+  <%= link_to "勤怠の編集", attendances_edit_one_month_user_path(date: @first_day), class: "btn btn-primary" %>
+  <%= link_to "CSV出力", export_csv_attendance_user_path(id: @user.id), class: "btn btn-primary" %><br>
   <%= link_to "勤怠修正ログ（承認済）", attendances_log_index_user_path, class: "btn btn-primary mb-20" %>
-  <%= link_to "CSV出力", export_csv_attendance_user_path(id: @user.id), class: "btn btn-primary mb-20" %>
   <div>
 <% end %>
   <table class="table table-bordered table-striped table-hover" id="table-attendances">
