@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info, :export_csv_attendance]
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :working_employees]
+  before_action :admin_user, only: [:index, :destroy, :edit_basic_info, :update_basic_info, :working_employees, :edit_system_info, :import]
   before_action :not_admin_user, only: :show
   before_action :set_one_month, only: [:show, :export_csv_attendance]
   before_action :set_apply_month, only: :show
@@ -62,9 +62,15 @@ class UsersController < ApplicationController
   end
 
   def import
-    # fileはtmpに自動で一時保存される
-    User.import(params[:file])
-    redirect_to users_url
+    if params[:file].present?
+      # fileはtmpに自動で一時保存される
+      User.import(params[:file])
+      flash[:success] = "CSVファイルインポートに成功しました。"
+      redirect_to users_url
+    else
+      flash[:danger] = "失敗しました。やり直して下さい。"
+      redirect_to users_url
+    end
   end
   
   def edit_basic_info
@@ -78,7 +84,6 @@ class UsersController < ApplicationController
     end
     redirect_to users_url
   end
-
 
   # 管理権限者、または現在ログインしているユーザーを許可します。
   def show_admin_or_correct_user

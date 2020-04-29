@@ -10,7 +10,7 @@
       <tr>
         <th></th>
         <th></th>
-        <th><%= Office.human_attribute_name(:id) %></th>
+        <th><%= Office.human_attribute_name(:office_id) %></th>
         <th><%= Office.human_attribute_name(:name) %></th>
         <th><%= Office.human_attribute_name(:office_type) %></th>
       </tr>
@@ -28,7 +28,7 @@
 		    	    data: { confirm: "削除してよろしいですか？" },
 		    	    class:"btn btn-primary" %>
             </td>
-            <td><%= office.id %></td>
+            <td><%= office.office_id %></td>
             <td><%= office.name %></td>
             <td><%= office.office_type %></td>
           </tr>
@@ -38,7 +38,8 @@
               <div id="AccordionCollapse<%= office.id %>" class="panel-collapse collapse">
             		<div class="panel-body">
                   <%= form_with(model: office, url: office_path(office), local: true) do |f| %>
-
+                    <%= f.label :office_id, class: "label-#{yield(:class_text)}" %>
+                    <%= f.text_field :office_id, class: "form-control" %>
                     <%= f.label :name, class: "label-#{yield(:class_text)}" %><span>　</span><span class="label label-danger">必須</span>
                     <%= f.text_field :name, class: "form-control" %>
                     <%= f.label :office_type, class: "label-#{yield(:class_text)}" %>
@@ -69,11 +70,13 @@
 		  <div class="panel-body">
         <%= form_with(model: @office, local:true) do |f| %>
           <%= render 'shared/error_office_messages', object: @office %>
+          <%= f.label :office_id, class: "label-#{yield(:class_text)}" %>
+          <%= f.text_field :office_id, class: "form-control" %>
           <%= f.label :name, class: "label-#{yield(:class_text)}" %><span>　</span><span class="label label-danger">必須</span>
           <%= f.text_field :name, class: "form-control" %>
           <%= f.label :office_type, class: "label-#{yield(:class_text)}" %>
           <%= f.text_field :office_type, class: "form-control" %>
-          <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text2)}" %>
+          <%= f.submit yield(:button_text2), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>
         <% end %>
 		  </div>
 		</div>

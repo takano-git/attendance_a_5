@@ -135,14 +135,15 @@ class AttendancesController < ApplicationController
               apply.apply_count = apply.apply_count + 1
               apply.save
             end
+            flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
           end
         elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認 マークのみ保存し後は保存しない
           attendance.mark = item[:mark]
           attendance.save
+          flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
         end
       end
     end
-    flash[:success] = "勤怠変更の申請を更新しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
@@ -158,7 +159,6 @@ class AttendancesController < ApplicationController
   
   # 残業申請の内容を保存する機能（申請の途中）
   def update_overtime
-    debugger
     attendances_params.each do |id, item|
       # とりあえずパラメを全部保存
       attendance = Attendance.find(id)

@@ -59,6 +59,7 @@ where("name like ?", "%#{name}%")
 
 
   def self.import(file)
+    # CSV.foreach(file.path, headers: true) do |row|
     CSV.foreach(file.path, headers: true) do |row|
       # IDが見つかれば、レコードを呼び出し、見つかれなければ、新しく作成
       # user = find_by(id: row["id"]) || new
@@ -72,6 +73,6 @@ where("name like ?", "%#{name}%")
 
    # 更新を許可するカラムを定義
    def self.updatable_attributes
-     ["id", "name", "email", "admin", "superior", "affiliation", "password"]
+     ["id", "name", "email", "affiliation", "employee_number", "uid", "basic_work_time", "designated_work_start_time", "designated_work_end_time", "admin", "superior", "password", "password_digest"]
    end
 end

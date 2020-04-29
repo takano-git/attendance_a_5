@@ -4,16 +4,18 @@ class AppliesController < ApplicationController
 
     @user = User.find(params[:user_id])
     @apply = Apply.find(params[:apply][:id])
-    # @apply = Apply.find_by(user_id: @user.id, month: @first_day)
-    # @apply = Apply.where(user_id: @user.id).where(month: @first_day).first
-    # apply = Apply.find_by(user_id: 2, mark: 1)
-    
-    # if @apply.update_attributes(authorizer: params[:authorizer], month: @first_day, mark: params[:mark])
-    if @apply.update_attributes(applies_params)
-      flash[:info] = "一か月分の承認申請しました"
+
+    if params[:apply][:authorizer].present?
+      if @apply.update_attributes(applies_params)
+        flash[:info] = "一か月分の承認申請しました"
+      else
+        flash[:danger] = "承認申請に失敗しました。やり直してください。"
+      end
+      
     else
-      flash[:danger] = "承認申請に失敗しました。やり直してください。"
+        flash[:danger] = "承認申請に失敗しました。やり直してください。"
     end
+    
     redirect_to @user
   end
 
@@ -35,19 +37,6 @@ class AppliesController < ApplicationController
         apply = Apply.find(id)
         if params[:user][:applies][id][:check] == "1"
           apply.update_attributes!(item)
-          
-          # if apply.apply_count == 0
-          #   apply.apply_count = apply.apply_count + 1
-          #   apply.save
-            
-          #   # 1ヶ月の勤怠を上長に申請するボタンを押した時にprevious_started_atなどに値を入れる
-          #   attendances = Attendance.where(worked_on: apply.month)
-          #   attendances.each do |attendance|
-          #     attendance.previous_started_at = attendance.started_at
-          #     attendance.previous_finished_at = attendance.finished_at
-          #     attendance.save
-          #   end
-          # end
         end
       end
     end

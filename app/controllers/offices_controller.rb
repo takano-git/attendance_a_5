@@ -41,6 +41,6 @@ class OfficesController < ApplicationController
   private
   
   def office_params
-    params.require(:office).permit(:name, :office_type)
+    params.require(:office).permit(:office_id, :name, :office_type)
   end
 end

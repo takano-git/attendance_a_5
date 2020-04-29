@@ -22,7 +22,7 @@
                       <th>指定勤務終了時間</th>
                       <th>時間外時間</th>
                       <th>業務処理内容</th>
-                      <th>指示者確認印</th>
+                      <th>指示者確認㊞</th>
                       <th>変更</th>
                       <th>勤怠を確認する</th>
                     </tr>
@@ -53,7 +53,7 @@
                         <td><%= uf.select :overtime_mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: user_overtime_attendance.overtime_mark } %></td>
                         <!--チェックなし　０　チェックあり　１-->
                         <td><%= uf.check_box :change_checked %></td>  
-                        <td><%= link_to "確認する", user_path(user_overtime_attendance.user_id), class: "btn btn-primary" %>確認用。アテンダンスID:<%= user_overtime_attendance.id %></td>
+                        <td><%= link_to "確認する", user_path(user_overtime_attendance.user_id), class: "btn btn-primary" %></td>
                       </tr>
                     <% end %>
                   <% end %>

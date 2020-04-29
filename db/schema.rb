@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200419212008) do
+ActiveRecord::Schema.define(version: 20200429033706) do
 
   create_table "applies", force: :cascade do |t|
     t.date "month"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20200419212008) do
     t.string "office_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "office_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -68,8 +69,8 @@ ActiveRecord::Schema.define(version: 20200419212008) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2020-04-26 23:00:00"
-    t.datetime "work_time", default: "2020-04-26 22:30:00"
+    t.datetime "basic_time", default: "2020-04-28 23:00:00"
+    t.datetime "work_time", default: "2020-04-28 22:30:00"
     t.boolean "superior", default: false
     t.string "affiliation"
     t.integer "employee_number"

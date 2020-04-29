@@ -21,7 +21,9 @@ User.create!(name: "上長1",
              admin: false,
              superior: true,
              designated_work_start_time: "09:00",
-             designated_work_end_time: "18:00")
+             designated_work_end_time: "18:00",
+             employee_number: 3,
+             uid: 3)
 
 User.create!(name: "上長2",
              email: "superior2@email.com",
@@ -30,7 +32,9 @@ User.create!(name: "上長2",
              admin: false,
              superior: true,
              designated_work_start_time: "09:00",
-             designated_work_end_time: "18:00")
+             designated_work_end_time: "18:00",
+             employee_number: 4,
+             uid:4)
 
 User.create!(name: "一般1",
              email: "general1@email.com",
@@ -39,7 +43,9 @@ User.create!(name: "一般1",
              admin: false,
              superior: false,
              designated_work_start_time: "09:00",
-             designated_work_end_time: "18:00")
+             designated_work_end_time: "18:00",
+             employee_number: 5,
+             uid: 5)
              
 User.create!(name: "一般2",
              email: "general2@email.com",
@@ -48,7 +54,9 @@ User.create!(name: "一般2",
              admin: false,
              superior: false,
              designated_work_start_time: "09:00",
-             designated_work_end_time: "18:00")
+             designated_work_end_time: "18:00",
+             employee_number: 6,
+             uid: 6)
 
 
 # 5.times do |n|
