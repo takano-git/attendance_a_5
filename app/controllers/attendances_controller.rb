@@ -199,7 +199,6 @@ class AttendancesController < ApplicationController
       if params[:user][:attendances][id][:change_checked] == "1"
         attendance.update_attributes!(item)
 
-        # 
         attendance = Attendance.find(id)
         attendance.overtime_note = attendance.overtime_applying_note
         attendance.overtime_applying_note = ""
