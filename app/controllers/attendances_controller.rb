@@ -46,10 +46,10 @@ class AttendancesController < ApplicationController
         else
           if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定 :applying_started_atに入力がある、BDのattendance.started_atがnilだったら 
               # if item[:applying_started_at] != attendance.started_at.strftime("%H:%M") 
-                attendance.mark = "1"                                                  # 申請中 のステータスをつける
+            attendance.mark = "1"                                                  # 申請中 のステータスをつける
 
               # end
-          elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変更を想定 :applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
+          elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変��を想定 :applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
             if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") # trueになってしまったitem[:applying_started_at] と attendance.started_at が違えば
               attendance.mark = "1"                                                  # 申請中 のステータスをつける
             end
@@ -138,7 +138,7 @@ class AttendancesController < ApplicationController
             end
             flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
           end
-        elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認 マークのみ保存し後は保存しない
+        elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認 マークのみ保存し後���保存しない
           attendance.mark = item[:mark]
           attendance.save
           flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
@@ -162,11 +162,16 @@ class AttendancesController < ApplicationController
   def update_overtime
     attendances_params.each do |id, item|
       # もし承認者の入力がなかったら 戻る
+      attendance = Attendance.find(id)
+      #  時間を比較するために申請した残業終了時間の変数を用意
+      param_overtime_applying_finished_at = params[:user][:attendances][id][:overtime_applying_finished_at].to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
+
       if params[:user][:attendances][id][:overtime_authorizer_id].blank? || params[:user][:attendances][id][:overtime_applying_finished_at].blank? || params[:user][:attendances][id][:overtime_applying_finished_at].blank? || params[:user][:attendances][id][:overtime_applying_note].blank?
         flash[:danger] = "残業申請の必須項目が未入力です。"
         redirect_to user_url(date: params[:date]) #一応遷移した
-      elsif
-        params[:user][:attendances][id][:overtime_applying_finished_at]
+      elsif param_overtime_applying_finished_at < User.find(attendance.user_id).designated_work_end_time.to_time
+        flash[:danger] = "終了予定時間は基本勤務終了時間より遅い時間を入力して下さい。"
+        redirect_to user_url(date: params[:date]) #一応遷移した
       else
         
         # とりあえずパラメを全部保存
@@ -193,6 +198,7 @@ class AttendancesController < ApplicationController
     end
   end
 
+  # 残業申請承認画面表示（上長側）
   def edit_judgment_overtime
     @user = User.find(params[:id])
     @judgment_overtime_attendances = Attendance.where(overtime_authorizer_id: @user.id).where(overtime_mark: 1) 
