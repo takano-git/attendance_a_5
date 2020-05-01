@@ -158,27 +158,39 @@ class AttendancesController < ApplicationController
     @overtime_authorizers = User.where(superior: true ).where.not(id: @user.id)
   end
   
-  # 残業申請の内容を保存する機能（申請の途中）
+  # 残業申請の内容を保存し申請する機能（申請者側）
   def update_overtime
     attendances_params.each do |id, item|
-      # とりあえずパラメを全部保存
-      attendance = Attendance.find(id)
-      attendance.update_attributes!(item)
-
-      # worked_onのカラム情報から日付情報をovertime_finished_atカラムに入れる
-      attendance = Attendance.find(id)
-      at_date = attendance.worked_on.in_time_zone
-
-      at_hour = attendance.overtime_applying_finished_at.hour
-      
-      at_day = at_date.day
-      if params[:user][:tomorrow] == "1"
-         at_day = at_date.day + 1  
+      # もし承認者の入力がなかったら 戻る
+      if params[:user][:attendances][id][:overtime_authorizer_id].blank? || params[:user][:attendances][id][:overtime_applying_finished_at].blank? || params[:user][:attendances][id][:overtime_applying_finished_at].blank? || params[:user][:attendances][id][:overtime_applying_note].blank?
+        flash[:danger] = "残業申請の必須項目が未入力です。"
+        redirect_to user_url(date: params[:date]) #一応遷移した
+      elsif
+        params[:user][:attendances][id][:overtime_applying_finished_at]
+      else
+        
+        # とりあえずパラメを全部保存
+        attendance = Attendance.find(id)
+        # attendance.update_attributes!(item)
+        if attendance.update_attributes!(item)
+          # worked_onのカラム情報から日付情報をovertime_finished_atカラムに入れる
+          attendance = Attendance.find(id)
+          at_date = attendance.worked_on.in_time_zone
+          at_hour = attendance.overtime_applying_finished_at.hour if attendance.overtime_applying_finished_at.present?
+          at_day = at_date.day
+          if params[:user][:tomorrow] == "1"
+             at_day = at_date.day + 1  
+          end
+          attendance.overtime_applying_finished_at = attendance.overtime_applying_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_applying_finished_at.min)
+          attendance.save
+          flash[:success] = "残業申請を送信しました。"
+          redirect_to user_url(date: params[:date]) #一応遷移した
+        else
+          flash[:danger] = "残業申請に失敗しました。やり直して下さい。"
+          redirect_to user_url(date: params[:date]) #一応遷移した
+        end
       end
-      attendance.overtime_applying_finished_at = attendance.overtime_applying_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_applying_finished_at.min)
-      attendance.save
     end
-    redirect_to user_url(date: params[:date]) #一応遷移した
   end
 
   def edit_judgment_overtime
@@ -205,6 +217,7 @@ class AttendancesController < ApplicationController
         attendance.overtime_finished_at = attendance.overtime_applying_finished_at
         attendance.overtime_applying_finished_at = ""
         attendance.save
+
       end
     end
     redirect_to user_url(@user) #一応遷移した
