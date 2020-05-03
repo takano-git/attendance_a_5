@@ -1,10 +1,10 @@
-<% if @office.errors.any? %>
+<% if day.errors.any? %>
   <div id="error_explanation">
     <div class="alert alert-danger">
-      入力エラーが<%= @office.errors.count %>件ありました。
+      入力エラーが<%= day.errors.count %>件ありました。
     </div>
     <ul>
-      <% @office.errors.full_messages.each do |msg| %>
+      <% day.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
     </ul>

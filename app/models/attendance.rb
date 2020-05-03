@@ -15,7 +15,7 @@ class Attendance < ApplicationRecord
   validate :started_at_than_finished_at_fast_if_invalid
   
   # 追加バリデーション
-  validate :applying_started_at_than_applying_finished_at_if_invalid
+  # validate :applying_started_at_than_applying_finished_at_if_invalid
   
   
   def finished_at_is_invalid_without_a_started_at
@@ -29,11 +29,11 @@ class Attendance < ApplicationRecord
   end
   
   # 追加バリデーション
-  def applying_started_at_than_applying_finished_at_if_invalid
-    if applying_started_at.present? && applying_finished_at.present? && change_authorizer_id.present?
-      errors.add(:applying_started_at, "より早い退勤時間は無効です") if applying_started_at > applying_finished_at
-    end
-  end
+  # def applying_started_at_than_applying_finished_at_if_invalid
+  #   if applying_started_at.present? && applying_finished_at.present? && change_authorizer_id.present?
+  #     errors.add(:applying_started_at, "より早い退勤時間は無効です") if applying_started_at > applying_finished_at
+  #   end
+  # end
   
 end
       

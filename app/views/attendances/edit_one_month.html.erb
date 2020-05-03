@@ -1,22 +1,25 @@
 <% provide(:title, @user.name) %>
 
 <%= form_with(model: @user, url: attendances_update_one_month_user_path(date: @first_day), local: true, method: :patch) do |f| %>
+
   <div>
     <table class="table table-bordered table-condensed table-hover" id="table-attendances">
       <thead>
         <tr>
           <th>日付</th>
           <th>曜日</th>
-          <th>出社</th>
-          <th>退社</th>
+          <th><span class="label label-danger">必須</span>　出社</th>
+          <th><span class="label label-danger">必須</span>　退社</th>
           <th>翌日</th>
           <th>在社時間</th>
           <th>備考</th>
-          <th>指示者確認㊞</th>
+          <th><span class="label label-danger">必須</span>　指示者確認㊞</th>
         </tr>
       </thead>
       <tbody>
         <% @attendances.each do |day| %>
+
+        
           <%
             css_class = 
             case $days_of_the_week[day.worked_on.wday]
@@ -27,6 +30,22 @@
             end
           %>
           <%= f.fields_for "attendances[]", day do |attendance| %>
+          
+        
+          <% if day.errors.any? %>
+            <div id="error_explanation">
+              <div class="alert alert-danger">
+                入力エラーが<%= day.errors.count %>件ありました。
+              </div>
+              <ul>
+                <% day.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+          
+          
           <tr>
             <th><strong><%= l(day.worked_on, format: :short) %></strong></th>
             <th class="<%= css_class %>"><strong><%= $days_of_the_week[day.worked_on.wday] %></strong></th>
