@@ -58,7 +58,7 @@
               </td>
               <td><%= attendance.time_field :applying_finished_at, class: "form-control" %></td>
             <% end %>
-            <td><%= attendance.check_box :tomorrow %></td>
+            <td><%= attendance.check_box :change_tomorrow %></td>
             <td>
               <% if day.started_at.present? && day.finished_at.present? %>
                 <%= working_times(day.started_at, day.finished_at) %>
@@ -67,7 +67,7 @@
 
             <td><%= attendance.text_field :applying_note, class: "form-control" %></td>
             <td>
-              <%= attendance.collection_select(:change_authorizer_id, @change_authorizers, :id, :name , prompt: "") %>
+              <%= attendance.collection_select(:applying_change_authorizer_id, @change_authorizers, :id, :name , prompt: "") %>
             </td>
           </tr>
         <% end %>
@@ -77,8 +77,8 @@
   </div>
 
   <div class="center">
-    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-lg btn-default" %> 
-    <%= f.submit "編集を保存する", class: "btn btn-lg btn-default" %>
+    <%= link_to "キャンセル", user_path(date: @first_day), class: "btn btn-lg btn-primary" %> 
+    <%= f.submit "編集を保存する", class: "btn btn-lg btn-primary" %>
 
   </div>
 <% end %>

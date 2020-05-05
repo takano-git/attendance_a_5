@@ -36,30 +36,24 @@ class AttendancesController < ApplicationController
   
   # 1ヶ月の勤怠変更の申請内容を保存し送信する機能(申請者側)
   def update_one_month
-    success_count = 0
-    failure_count = 0
     attendances_params.each do |id, item|
-    
       attendance = Attendance.find(id)
-        # １回目の変更ならデータベースはnilのはず（もし全ての欄（started_at finishedat change_authorizer_id）がnilなら）
-      # if attendance.started_at.nil? && attendance.finished_at.nil? && attendance.change_authorizer_id.nil?
+      # 変更申請終了時間をあとで比較するために変数に入れる。
+      if item[:applying_started_at].present? && item[:applying_started_at].present? && item[:applying_change_authorizer_id].present?
+        # 申請したattendanceの日にちをとるので、なんどやっても同じ日が入りズレない
+        param_applying_finished_at = item[:applying_finished_at].to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
+        # 翌日チェックが入っていたら変数に１日たす。
+        # if params[:user][:attendances][id][:tomorrow] == "1"
+        if item[:change_tomorrow] == "1"
+          param_applying_finished_at = param_applying_finished_at + 1.day
+        end
+        param_applying_started_at = item[:applying_started_at].to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
+      end
 
-        # もし申請欄が全て未入力なら申請しない行と判断し、何もしない
-        if item[:applying_started_at].blank? && item[:applying_started_at].blank? && item[:change_authorizer_id].blank?
-          # 何もしない（成功or失敗のカウントはスルー）
-
-        # 申請する出勤時間と退勤時間があり、申請退社時間の方が申請出社時間より早かったら　エラーカウントし申請を保存しない
-        # elsif item[:applying_started_at].present? && item[:applying_finished_at].present?
-        #   if item[:applying_started_at] > item[:applying_finished_at]
-        #     # フラッシュメッセージに表示する失敗カウントに１たす
-        #     failure_count = failure_count + 1
-        #   end
-        
-        
         # もし申請欄が３つとも入力があれば
-        elsif item[:applying_started_at].present? && item[:applying_started_at].present? && item[:change_authorizer_id].present?
-          # もし申請する退勤時間が出勤時間より遅かったら　申請処理へ進む
-          if item[:applying_started_at] < item[:applying_finished_at]
+        if item[:applying_started_at].present? && item[:applying_started_at].present? && item[:applying_change_authorizer_id].present?
+          # もし申請する退勤時間が出勤時間以降の士官だったら　申請処理へ進む
+          if param_applying_started_at <= param_applying_finished_at
             ########### 申請処理に入る
             # 申請中 のステータスをつける
             attendance.mark = "1"
@@ -67,87 +61,23 @@ class AttendancesController < ApplicationController
             attendance.update_attributes!(item)  # その他にも送られたカラムを保存する !がつくとバリデーションを通しバリでに引っかかるとエラーになる
   
             # もし翌日チェックが入っていたら、applying_finished_atに１日たす
-            if attendances_params[id][:tomorrow] =="1"
+            if attendances_params[id][:change_tomorrow] =="1"
               attendance = Attendance.find(id)
               attendance.applying_finished_at = attendance.applying_finished_at + 1.day
               attendance.save
             end
-            # フラッシュメッセージに表示する成功カウントに１たす
-            success_count = success_count + 1
-          # それ以外（この場合は申請出社が申請退社より早い）
-          else　
-            failure_count = failure_count + 1
           end
-        # もし　applying_started_atのみが　当日日付で入力があれば(当日で出勤ボタンのみ押しているので)、他は入力なしなのでスルー
-        elsif item[:applying_started_at].present? && attendance.worked_on == Date.current && item[:applying_finished_at].blank? && item[:change_authorizer_id].blank?
-          # 何もせずスルー
-          
-        # もし申請欄に一つでも入力があり、未入力欄があると以下の処理に行き着くはず
-        else
-          # エラーメッセージを表示し、申請を１つも保存しない
-          # フラッシュメッセージに表示する失敗カウントに１たす
-          failure_count = failure_count + 1
         end   # if item[:applying_started_at].blank? && item[:applying_started_at].blank? && item[:change_authorizer_id].blank? のend
-
-      # ２回目以降の変更もしくは当日で出勤ボタンのみ押している、もしくは否認されているなら（データベースに何か保存されている行）
-      # else
-        
-      #   if
-        
-        
-        
-        
-        
-        # # ①変更申請をしたのに申請先の上長を選んでいなかったらエラーメッセージ
-        # if item[:change_authorizer_id].blank? && item[:applying_started_at].present? && item[:applying_finished_at].present?
-        #   flash[:danger] = "申請先上長を選択してください"
-        # # 申請している出勤時間　退勤時間どちらかが空白だと　エラーメッセージを表示
-        # elsif item[:applying_started_at].blank? || item[:applying_finished_at].blank?
-        #   flash[:danger] = "申請する出勤時間もしくは退勤時間が未入力です。"
-          
-        # 申請先上長を選択していたら　処理に入る
-        # else
-        #   if item[:applying_started_at].present? && attendance.started_at.nil?       # 新規の申請を想定 :applying_started_atに入力がある、BDのattendance.started_atがnilだったら 
-        #     attendance.mark = "1"                                                  # 申請中 のステータスをつける
-        #   elsif item[:applying_started_at].present? && attendance.started_at.present?       # 変���を想定 :applying_started_atに入力があ理、BDのattendance.started_atが存在したら 
-        #     if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") # trueになってしまったitem[:applying_started_at] と attendance.started_at が違えば
-        #       attendance.mark = "1"                                                  # 申請中 のステータスをつける
-        #     end
-        #   elsif item[:applying_finish_at].present? && attendance.finished_at.nil?      # :applying_finish_atに入力があり、attendance.finished_atがnilだったら
-        #       attendance.mark = "1"                                                  # 申請中 のステータスをつける
-        #   elsif item[:applying_finished_at].present? && attendance.finished_at.present?      # :applying_finish_atに入力があったら
-        #     if item[:applying_finished_at] != attendance.finished_at.strftime("%H:%M:%S.%L")      # true item[:applying_finished_at] と attendance.finished_at が違えば
-        #       attendance.mark = "1"                                                  # 申請中 のステータスをつける
-        #     end
-        #   elsif attendance.started_at.present? && attendance.finished_at.present?      # 出社退社ボタンを押している日
-        #     if item[:applying_started_at] != attendance.started_at.strftime("%H:%M:%S.%L") ||  item[:applying_finished_at] != attendance.finished_at.strftime("%H:%M:%S.%L")
-        #       attendance.mark = "1"    # 申請中 のステータスをつける
-        #     end
-        #   elsif item[:applying_note].present?
-        #     if item[:applying_note] != attendance.note
-        #       attendance.mark = "1"
-        #     end
-        #   end
-          
-      # end # if item[:change_authorizer_id].blank? && item[:applying_started_at].present? && item[:applying_finished_at].present?  の終わり
-
-    end # attendances_params.each do |id, item| の終わり
+      end # attendances_params.each do |id, item| の終わり
     
-    if success_count > 0
-      flash[:success] = "勤怠変更の申請を#{success_count}件送信しました。"
-    end
-        
-    if failure_count > 0
-      flash[:danger] = "勤怠変更の申請が#{failure_count}件失敗しました。やり直してください。"
-    end
-    
+    flash[:success] = "勤怠変更申請を更新しました。"
     redirect_to user_url(date: params[:date])
   end  # defの終わり
 
   # モーダル表示（勤怠変更を承認するモーダル 上長側）
   def change_one_month
     @user = User.find(params[:id])
-    @change_attendances = Attendance.where(change_authorizer_id: @user.id).where(mark: 1) 
+    @change_attendances = Attendance.where(applying_change_authorizer_id: @user.id).where(mark: 1) 
     applicant_change_id_array = []
     @change_attendances.each do |change_attendance|
       applicant_change_id_array.push(change_attendance.user_id)
@@ -161,7 +91,8 @@ class AttendancesController < ApplicationController
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
       
-        if item[:mark] == "2" && item[:change_checked] == "1"  # 承認 全部保存されるパターン　:mark == "2"承認　＆＆ change_checked] == "1" 変更
+        if item[:change_checked] == "1"  # 全部保存される change_checked] == "1" 変更
+        # if item[:mark] == "2" && item[:change_checked] == "1"  # 承認 全部保存されるパターン　:mark == "2"承認　＆＆ change_checked] == "1" 変更
           attendance.previous_started_at = attendance.started_at if attendance.started_at.nil?
           attendance.previous_finished_at = attendance.finished_at
           attendance.started_at = item[:applying_started_at]
@@ -169,38 +100,38 @@ class AttendancesController < ApplicationController
           attendance.note = item[:applying_note]
           attendance.mark = item[:mark]
           attendance.previous_finished_at = attendance.finished_at
+          attendance.change_authorizer_id = attendance.applying_change_authorizer_id
+          attendance.applying_change_authorizer_id = nil
           attendance.attendance_changed = true
           attendance.approval_date = Date.today
           attendance.save
           
           
-          # ここにログ表示の為の機能を追加（apply_countにカウント１をつける）。カウントが付いているものはログ表示対象。申請者の申請月のアプライを取ってくる。１個しかないはず。。。
-          target_month = Date.today.change(month: attendance.worked_on.month) #  => Sun, 12 Apr 2020 
-          
-          range = target_month.beginning_of_month..target_month.end_of_month
-          applies = Apply.where(user_id: attendance.user_id).where(month: range)
-          
-          applies.each do |apply|
-            if apply.apply_count == 0
-              # 1ヶ月の勤怠を上長に申請するボタンを押した時にprevious_started_atなどに値を入れる
-              attendances = Attendance.where(worked_on: apply.month)
-              attendances.each do |attendance|
-                attendance.previous_started_at = attendance.started_at
-                attendance.previous_finished_at = attendance.finished_at
-                attendance.save
+            # ここにログ表示の為の機能を追加（apply_countにカウント１をつける）。カウントが付いているものはログ表示対象。申請者の申請月のアプライを取ってくる。１個しかないはず。。。
+          if item[:mark] == "2"
+            target_month = Date.today.change(month: attendance.worked_on.month) #  => Sun, 12 Apr 2020 
+            
+            range = target_month.beginning_of_month..target_month.end_of_month
+            applies = Apply.where(user_id: attendance.user_id).where(month: range)
+            
+            applies.each do |apply|
+              if apply.apply_count == 0
+                # 1ヶ月の勤怠を上長に申請するボタンを押した時にprevious_started_atなどに値を入れる
+                attendances = Attendance.where(worked_on: apply.month)
+                attendances.each do |attendance|
+                  attendance.previous_started_at = attendance.started_at
+                  attendance.previous_finished_at = attendance.finished_at
+                  attendance.save
+                end
+                apply.apply_count = apply.apply_count + 1
+                apply.save
               end
-              apply.apply_count = apply.apply_count + 1
-              apply.save
             end
-            flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
           end
-        elsif item[:mark] == "3" && item[:change_checked] == "1" # 否認 マークのみ保存し������保存しない
-          attendance.mark = item[:mark]
-          attendance.save
-          flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
         end
       end
     end
+    flash[:success] = "勤怠変更の申請を決裁しました。"  # 追加
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
@@ -237,7 +168,7 @@ class AttendancesController < ApplicationController
       else
         # とりあえずパラメを全部保存
         attendance = Attendance.find(id)
-        # attendance.update_attributes!(item)
+
         if attendance.update_attributes!(item)
           # worked_onのカラム情報から日付情報をovertime_finished_atカラムに入れる
           attendance = Attendance.find(id)
@@ -311,8 +242,8 @@ class AttendancesController < ApplicationController
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note,
       :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at,
-      :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :tomorrow, :overtime_applying_finished_at,
-      :attendance_changed, :overtime_applying_note])[:attendances]
+      :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :change_tomorrow, :overtime_applying_finished_at,
+      :attendance_changed, :overtime_applying_note,:applying_change_authorizer_id])[:attendances]
     end
     
     # 管理権限者、または現在ログインしているユーザーを許可します。
@@ -324,4 +255,5 @@ class AttendancesController < ApplicationController
         redirect_to(root_url)
       end
     end
+    
 end

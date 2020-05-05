@@ -23,7 +23,7 @@ class UsersController < ApplicationController
     @authorizers= User.where(superior: true ).where.not(id: @user.id)
     @applies = Apply.where(authorizer: @user.id).where(mark: 1)
     # 勤怠変更認証の為
-    @change_attendances = Attendance.where(change_authorizer_id: @user.id).where(mark: 1)
+    @change_attendances = Attendance.where(applying_change_authorizer_id: @user.id).where(mark: 1)
     @overtime_attendances = Attendance.where(overtime_authorizer_id: @user.id).where(overtime_mark: 1)
   end
 
