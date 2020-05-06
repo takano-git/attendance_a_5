@@ -54,7 +54,7 @@
                         <!--チェックなし　０　チェックあり　１-->
                         <td><%= uf.check_box :change_checked %></td>
                             <%= uf.hidden_field :view_date, :value =>@view_date %>
-                        <td><%= link_to "確認する", user_path(user_overtime_attendance.user_id), class: "btn btn-primary" %></td>
+                        <td><%= link_to "確認する", user_path(user_overtime_attendance.user_id,date: user_overtime_attendance.worked_on.beginning_of_month), class: "btn btn-primary" %></td>
                       </tr>
                     <% end %>
                   <% end %>
