@@ -83,7 +83,6 @@ class AttendancesController < ApplicationController
       applicant_change_id_array.push(change_attendance.user_id)
     end
     @applicant_change_id_array = applicant_change_id_array.uniq
-    @view_date = params[:view_date]
   end
   
   # モーダルで勤怠変更申請まとめて更新機能(上長側)
@@ -153,50 +152,45 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       # 基本勤務終了時間より早��申請をしていたら　戻る
       # 比較用変数を用意
+      param_overtime_applying_finished_at = params[:user][:attendances][id][:overtime_applying_finished_at].to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
+      if params[:user][:tomorrow] == "1"
+        param_overtime_applying_finished_at = param_overtime_applying_finished_at + 1.day
+      end
+      designated_work_end_time = User.find(attendance.user_id).designated_work_end_time.to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
     
-      # 必須項目が全て入力済みだと　進む
-      if item[:overtime_applying_finished_at].present? && item[:overtime_applying_note].present? && item[:overtime_authorizer_id].present?
-        # 残業申請で送られたパラメをCTUからJST時間に変更し変数に入れる。（Time型　JST）日付けを申請したい日にちに変更
-        param_overtime_applying_finished_at = item[:overtime_applying_finished_at].to_time.to_s.gsub(/0000/, '0900').to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
-        # 翌日チェックが入っていたら残業申請変数に１日たす
-        if params[:user][:tomorrow] == "1"
-          param_overtime_applying_finished_at = param_overtime_applying_finished_at + 1.day
-        end
-        # 指定勤務終了時間を変数に入れる（Time型　JST）
-        designated_work_end_time = User.find(attendance.user_id).designated_work_end_time.to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
-
-        if param_overtime_applying_finished_at > designated_work_end_time
-          attendance = Attendance.find(id)
-          if attendance.update_attributes!(item)
-            # worked_onのカラム情報から日付情報をovertime_finished_atカラムに入れる
-            attendance = Attendance.find(id)
-            # at_date = attendance.worked_on.in_time_zone
-            # at_hour = attendance.overtime_applying_finished_at.hour
-            # at_day = at_date.day
-            # if params[:user][:tomorrow] == "1"
-            #   at_day = at_date.day + 1  
-            # end
-            # attendance.overtime_applying_finished_at = attendance.overtime_applying_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_applying_finished_at.min)
-            attendance.overtime_applying_finished_at = param_overtime_applying_finished_at
-            attendance.save
-        
-            flash[:success] = "残業申請を送信しました。"
-            redirect_to user_url(date: attendance.worked_on.beginning_of_month)
-          else
-            flash[:danger] = "残業申請に失敗しました。"
-            redirect_to user_url(date: attendance.worked_on.beginning_of_month)
-          end
-        else
-          flash[:danger] = "残業申請に失敗しました。残業申請の終了予定時間は基本勤務終了時間より遅い時間を入力して下さい。"
-          redirect_to user_url(date: attendance.worked_on.beginning_of_month)
-        end  
+      # 必須項目が未入力だと　戻る
+      if params[:user][:attendances][id][:overtime_authorizer_id].blank? || params[:user][:attendances][id][:overtime_applying_finished_at].blank? || params[:user][:attendances][id][:overtime_applying_finished_at].blank? || params[:user][:attendances][id][:overtime_applying_note].blank?
+        flash[:danger] = "残業申請の必須項目が未入力です。"
+        redirect_to user_url(date: params[:date]) 
+      # 残業終了予定時間が基本勤務終了時間より早いと　戻る
+      elsif param_overtime_applying_finished_at < designated_work_end_time
+      debugger
+        flash[:danger] = "終了予定時間は基本勤務終了時間より遅い時間を入力して下さい。"
+        redirect_to user_url(date: params[:date])
       else
-         flash[:danger] = "残業申請に失敗しました。"
-         redirect_to user_url(date: attendance.worked_on.beginning_of_month)
-      end # if item[:overtime_applying_finished_at].present? && item[:overtime_applying_note].present? && item[:overtime_authorizer_id].present? のend
-    end # attendances_params.each do |id, item|のend
-  end # def update_overtimeのend
+        # とりあえずパラメを全部保存
+        attendance = Attendance.find(id)
 
+        if attendance.update_attributes!(item)
+          # worked_onのカラム情報から日付情報をovertime_finished_atカラムに入れる
+          attendance = Attendance.find(id)
+          at_date = attendance.worked_on.in_time_zone
+          at_hour = attendance.overtime_applying_finished_at.hour if attendance.overtime_applying_finished_at.present?
+          at_day = at_date.day
+          if params[:user][:tomorrow] == "1"
+             at_day = at_date.day + 1  
+          end
+          attendance.overtime_applying_finished_at = attendance.overtime_applying_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_applying_finished_at.min)
+          attendance.save
+          flash[:success] = "残業申請を送信しました。"
+          redirect_to user_url(date: params[:date]) #一応遷移した
+        else
+          flash[:danger] = "残業申請に失敗しました。やり直して下さい。"
+          redirect_to user_url(date: params[:date]) #一応遷移した
+        end
+      end
+    end
+  end
 
   # 残業申請承認画面表示（上長側）
   def edit_judgment_overtime
@@ -208,30 +202,25 @@ class AttendancesController < ApplicationController
     end
     # ユーザーIDが入る
     @judgment_overtime_attendances_id_array = judgment_overtime_attendances_id_array.uniq
-    @view_date = params[:view_date]
   end
   
-  # 残業申請承認（上長側）
   def update_judgment_overtime
-    params_view_date = []
     @user = User.find(params[:id])
     attendances_params.each do |id, item|
       attendance = Attendance.find(id)
-      params_view_date.push params[:user][:attendances][id][:view_date]
-      if params[:user][:attendances][id][:change_checked] == "1"  # 変更欄にチェックが入っていたら
+      if params[:user][:attendances][id][:change_checked] == "1"
         attendance.update_attributes!(item)
+
         attendance = Attendance.find(id)
         attendance.overtime_note = attendance.overtime_applying_note
         attendance.overtime_applying_note = ""
         attendance.overtime_finished_at = attendance.overtime_applying_finished_at
         attendance.overtime_applying_finished_at = ""
         attendance.save
+
       end
     end
-    flash[:success] = "残業申請を更新しました。"
-    # redirect_to user_url(@user)
-    
-    redirect_to user_url(date: params_view_date[0])
+    redirect_to user_url(@user) #一応遷移した
   end
 
   def log_index
@@ -256,7 +245,7 @@ class AttendancesController < ApplicationController
       params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note,
       :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at,
       :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :change_tomorrow, :overtime_applying_finished_at,
-      :attendance_changed, :overtime_applying_note,:applying_change_authorizer_id, :view_date])[:attendances]
+      :attendance_changed, :overtime_applying_note,:applying_change_authorizer_id])[:attendances]
     end
     
     # 管理権限者、または現在ログインしているユーザーを許可します。
@@ -268,4 +257,5 @@ class AttendancesController < ApplicationController
         redirect_to(root_url)
       end
     end
+    
 end

@@ -62,7 +62,7 @@
     
     <% if @overtime_attendances.count > 0 %>
       <p class="danger-color">
-        【残業申請のお知らせ】<span class="visible-inline danger-color box-danger"><%= link_to "#{@overtime_attendances.count}件の申請があります", attendances_edit_judgment_overtime_user_path(@user), remote: true, class: "btn-notice danger-color" %></span>
+        【残業申請のお知らせ】<span class="visible-inline danger-color box-danger"><%= link_to "#{@overtime_attendances.count}件の申請があります", attendances_edit_judgment_overtime_user_path(@user, view_date: @first_day), remote: true, class: "btn-notice danger-color" %></span>
       </p>
     <% else %> 
       <p>【残業申請のお知らせ】</p>
