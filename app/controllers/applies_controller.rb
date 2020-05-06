@@ -26,7 +26,6 @@ class AppliesController < ApplicationController
     @applies.each do |apply|
       apply_id_array.push(apply.user_id)
     end
-    
     @apply_id_array = apply_id_array.uniq
   end
 
@@ -40,7 +39,7 @@ class AppliesController < ApplicationController
         end
       end
     end
-    # flash[:success] = "1ヶ月分の勤怠申請を更新しました。"
+    flash[:success] = "所属長承認申請を更新しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"

@@ -33,6 +33,8 @@ class UsersController < ApplicationController
   
   def create
     @user= User.new(user_params)
+    @user.designated_work_start_time = "09:00"
+    @user.designated_work_end_time = "18:00"
     if @user.save
       log_in @user # 保存成功後、ログインします。
       flash[:success] ='新規作成に成功しました。'

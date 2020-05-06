@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200505070340) do
+ActiveRecord::Schema.define(version: 20200506205500) do
 
   create_table "applies", force: :cascade do |t|
     t.date "month"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20200505070340) do
     t.date "approval_date"
     t.integer "change_tomorrow", default: 0
     t.integer "applying_change_authorizer_id"
+    t.integer "overtime_change_checked", default: 0
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -71,8 +72,8 @@ ActiveRecord::Schema.define(version: 20200505070340) do
     t.string "remember_digest"
     t.boolean "admin", default: false
     t.string "department"
-    t.datetime "basic_time", default: "2020-05-05 23:00:00"
-    t.datetime "work_time", default: "2020-05-05 22:30:00"
+    t.datetime "basic_time", default: "2020-05-06 23:00:00"
+    t.datetime "work_time", default: "2020-05-06 22:30:00"
     t.boolean "superior", default: false
     t.string "affiliation"
     t.integer "employee_number"

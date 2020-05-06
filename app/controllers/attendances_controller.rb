@@ -39,7 +39,7 @@ class AttendancesController < ApplicationController
     attendances_params.each do |id, item|
       attendance = Attendance.find(id)
       # 変更申請終了時間をあとで比較するために変数に入れる。
-      if item[:applying_started_at].present? && item[:applying_started_at].present? && item[:applying_change_authorizer_id].present?
+      if item[:applying_started_at].present? && item[:applying_finished_at].present? && item[:applying_change_authorizer_id].present?
         # 申請したattendanceの日にちをとるので、なんどやっても同じ日が入りズレない
         param_applying_finished_at = item[:applying_finished_at].to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
         # 翌日チェックが入っていたら変数に１日たす。
@@ -51,7 +51,7 @@ class AttendancesController < ApplicationController
       end
 
         # もし申請欄が３つとも入力があれば
-        if item[:applying_started_at].present? && item[:applying_started_at].present? && item[:applying_change_authorizer_id].present?
+        if item[:applying_started_at].present? && item[:applying_finished_at].present? && item[:applying_change_authorizer_id].present?
           # もし申請する退勤時間が出勤時間以降の士官だったら　申請処理へ進む
           if param_applying_started_at <= param_applying_finished_at
             ########### 申請処理に入る
@@ -88,7 +88,7 @@ class AttendancesController < ApplicationController
   
   # モーダルで勤怠変更申請まとめて更新機能(上長側)
   def update_change_one_month
-    ActiveRecord::Base.transaction do # トランザクションを開始します。
+    #ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
       
@@ -100,6 +100,7 @@ class AttendancesController < ApplicationController
           attendance.finished_at = item[:applying_finished_at]
           attendance.note = item[:applying_note]
           attendance.mark = item[:mark]
+          attendance.change_checked = 0
           attendance.previous_finished_at = attendance.finished_at
           attendance.change_authorizer_id = attendance.applying_change_authorizer_id
           attendance.applying_change_authorizer_id = nil
@@ -128,15 +129,16 @@ class AttendancesController < ApplicationController
                 apply.save
               end
             end
+          else
+          # flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
+          # redirect_to attendances_edit_one_month_user_url(date: params[:date])
           end
         end
-      end
     end
-    flash[:success] = "勤怠変更の申請を決裁しました。"  # 追加
+    flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
     redirect_to user_url(date: params[:date])
-  rescue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
-    flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"
-    redirect_to attendances_edit_one_month_user_url(date: params[:date])
+  #escue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
+  
   end
 
   # 残業申請の編集画面の機能（申請者側）
@@ -178,6 +180,7 @@ class AttendancesController < ApplicationController
             # end
             # attendance.overtime_applying_finished_at = attendance.overtime_applying_finished_at.change(month: at_date.month, day: at_day, hour: at_hour, min: attendance.overtime_applying_finished_at.min)
             attendance.overtime_applying_finished_at = param_overtime_applying_finished_at
+            attendance.overtime_change_checked = 0
             attendance.save
         
             flash[:success] = "残業申請を送信しました。"
@@ -218,7 +221,7 @@ class AttendancesController < ApplicationController
     attendances_params.each do |id, item|
       attendance = Attendance.find(id)
       params_view_date.push params[:user][:attendances][id][:view_date]
-      if params[:user][:attendances][id][:change_checked] == "1"  # 変更欄にチェックが入っていたら
+      if params[:user][:attendances][id][:overtime_change_checked] == "1"  # 変更欄にチェックが入っていたら
         attendance.update_attributes!(item)
         attendance = Attendance.find(id)
         attendance.overtime_note = attendance.overtime_applying_note
@@ -256,7 +259,7 @@ class AttendancesController < ApplicationController
       params.require(:user).permit(attendances: [:started_at, :finished_at, :applying_started_at, :applying_finished_at, :note,
       :overtime_instruction, :instructor, :change_authorizer_id, :mark, :applying_note, :change_checked, :overtime_finished_at,
       :overtime_note, :user_id, :overtime_mark, :overtime_authorizer_id, :change_tomorrow, :overtime_applying_finished_at,
-      :attendance_changed, :overtime_applying_note,:applying_change_authorizer_id, :view_date])[:attendances]
+      :attendance_changed, :overtime_applying_note,:applying_change_authorizer_id, :view_date, :overtime_change_checked])[:attendances]
     end
     
     # 管理権限者、または現在ログインしているユーザーを許可します。

@@ -152,6 +152,7 @@
           <td><%= sprintf("%.2f", (day.overtime_finished_at - calc_designated_work_end_time) / 60 / 60) if day.overtime_finished_at.present? && @user.designated_work_end_time.present? %></td>
           <td><%= day.overtime_note %></td>
           <td>
+            <%= User.find(day.applying_change_authorizer_id).name if day.applying_change_authorizer_id.present? %>
             <%= User.find(day.change_authorizer_id).name if day.change_authorizer_id.present? %><span>　</span><%= $mark_change[day.mark] %>
             <% $mark_change2 = %w{　 残業申請中 残業申請承認済 残業申請否認} %>
             <%= User.find(day.overtime_authorizer_id).name if day.overtime_authorizer_id.present? %><span>　</span><%= $mark_change2[day.overtime_mark] %>

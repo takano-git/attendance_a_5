@@ -29,7 +29,7 @@
                         <td><%= l(sinsei.month, format: :short) %></td>
                         <td><%= af.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: sinsei.mark } %></td>
                         <td><%= af.check_box :check %></td>
-                        <td><%= link_to "確認する", user_path(sinsei.user_id), class: "btn btn-lg btn-primary" %></td>
+                        <td><%= link_to "確認する", user_path(sinsei.user_id, date:sinsei.month), class: "btn btn-lg btn-primary" %></td>
                       </tr>
                     <% end %>
                   <% end %>
