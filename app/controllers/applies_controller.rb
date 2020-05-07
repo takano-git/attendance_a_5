@@ -36,10 +36,10 @@ class AppliesController < ApplicationController
         apply = Apply.find(id)
         if params[:user][:applies][id][:check] == "1"
           apply.update_attributes!(item)
+          flash[:success] = "所属長承認申請を更新しました。"
         end
       end
     end
-    flash[:success] = "所属長承認申請を更新しました。"
     redirect_to user_url(date: params[:date])
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
     flash[:danger] = "無効な入力データがあった為、更新をキャンセルしました。"

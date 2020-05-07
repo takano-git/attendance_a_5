@@ -36,8 +36,6 @@ class AttendancesController < ApplicationController
   
   # 1ヶ月の勤怠変更の申請内容を保存し送信する機能(申請者側)
   def update_one_month
-    success_count = 0
-    failure_count = 0
     attendances_params.each do |id, item|
       attendance = Attendance.find(id)
       # 変更申請終了時間をあとで比較するために変数に入れる。
@@ -51,42 +49,28 @@ class AttendancesController < ApplicationController
         end
         param_applying_started_at = item[:applying_started_at].to_time.change(month: attendance.worked_on.month).change(day: attendance.worked_on.day)
       end
-      
-        # もし上長を洗濯していたら
-        if item[:applying_change_authorizer_id].present?
-          # もし申請欄が３つとも入力があれば
-          if item[:applying_started_at].present? && item[:applying_finished_at].present? && item[:applying_change_authorizer_id].present?
-            # もし申請する退勤時間が出勤時間以降の士官だったら　申請処理へ進む
-            if param_applying_started_at < param_applying_finished_at
-              ########### 申請処理に入る
-              # 申請中 のステータスをつける
-              attendance.mark = "1"
-              attendance.save                      # attendance.mark = "1"のカラムだけ保存(申請中のフラグをBDに保存)
-              attendance.update_attributes!(item)  # その他にも送られたカラムを保存する !がつくとバリデーションを通しバリでに引っかかるとエラーになる
-              success_count = success_count + 1    # サクセスカウントに１たす
-              # もし翌日チェックが入っていたら、applying_finished_atに１日たす
-              if attendances_params[id][:change_tomorrow] =="1"
-                attendance = Attendance.find(id)
-                attendance.applying_finished_at = attendance.applying_finished_at + 1.day
-                attendance.save
-              end
-            else
-              failure_count = failure_count+ 1
-            end
-          else
-            failure_count = failure_count+ 1
-          end   # if item[:applying_started_at].blank? && item[:applying_started_at].blank? && item[:change_authorizer_id].blank? のend
-        end    # if item[:applying_change_authorizer_id].present? の終わり
 
-        
+        # もし申請欄が３つとも入力があれば
+        if item[:applying_started_at].present? && item[:applying_finished_at].present? && item[:applying_change_authorizer_id].present?
+          # もし申請する退勤時間が出勤時間以降の士官だったら　申請処理へ進む
+          if param_applying_started_at <= param_applying_finished_at
+            ########### 申請処理に入る
+            # 申請中 のステータスをつける
+            attendance.mark = "1"
+            attendance.save                      # attendance.mark = "1"のカラムだけ保存(申請中のフラグをBDに保存)
+            attendance.update_attributes!(item)  # その他にも送られたカラムを保存する !がつくとバリデーションを通しバリでに引っかかるとエラーになる
+  
+            # もし翌日チェックが入っていたら、applying_finished_atに１日たす
+            if attendances_params[id][:change_tomorrow] =="1"
+              attendance = Attendance.find(id)
+              attendance.applying_finished_at = attendance.applying_finished_at + 1.day
+              attendance.save
+            end
+          end
+        end   # if item[:applying_started_at].blank? && item[:applying_started_at].blank? && item[:change_authorizer_id].blank? のend
       end # attendances_params.each do |id, item| の終わり
-    if success_count > 0
-      # flash[:success] = "勤怠変更申請を#{success_count}件送信しました。"
-      flash[:success] = "勤怠変更申請を更新しました。"
-    end
-    if failure_count > 0
-      flash[:danger] = "勤怠変更申請に#{failure_count}件、失敗しました。"
-    end
+    
+    flash[:success] = "勤怠変更申請を更新しました。"
     redirect_to user_url(date: params[:date])
   end  # defの終わり
 
@@ -104,7 +88,6 @@ class AttendancesController < ApplicationController
   
   # モーダルで勤怠変更申請まとめて更新機能(上長側)
   def update_change_one_month
-    update_count = 0
     #ActiveRecord::Base.transaction do # トランザクションを開始します。
       attendances_params.each do |id, item|
         attendance = Attendance.find(id)
@@ -124,7 +107,7 @@ class AttendancesController < ApplicationController
           attendance.attendance_changed = true
           attendance.approval_date = Date.today
           attendance.save
-          update_count = update_count + 1
+          
           
             # ここにログ表示の為の機能を追加（apply_countにカウント１をつける）。カウントが付いているものはログ表示対象。申請者の申請月のアプライを取ってくる。１個しかないはず。。。
           if item[:mark] == "2"
@@ -152,9 +135,7 @@ class AttendancesController < ApplicationController
           end
         end
     end
-    if update_count > 0
-      flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
-    end
+    flash[:success] = "勤怠変更の申請を更新しました。"  # 追加
     redirect_to user_url(date: params[:date])
   #escue ActiveRecord::RecordInvalid  # トランザクションによるエラーの分岐です。
   
@@ -236,7 +217,6 @@ class AttendancesController < ApplicationController
   # 残業申請承認（上長側）
   def update_judgment_overtime
     params_view_date = []
-    update_count = 0
     @user = User.find(params[:id])
     attendances_params.each do |id, item|
       attendance = Attendance.find(id)
@@ -249,12 +229,9 @@ class AttendancesController < ApplicationController
         attendance.overtime_finished_at = attendance.overtime_applying_finished_at
         attendance.overtime_applying_finished_at = ""
         attendance.save
-        update_count = update_count + 1
       end
     end
-    if update_count > 0
-      flash[:success] = "残業申請を更新しました。"
-    end
+    flash[:success] = "残業申請を更新しました。"
     # redirect_to user_url(@user)
     
     redirect_to user_url(date: params_view_date[0])

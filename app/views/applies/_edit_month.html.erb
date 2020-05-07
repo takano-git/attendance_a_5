@@ -26,7 +26,7 @@
                   <% applies.each do |sinsei| %>
                     <%= f.fields_for "applies[]", sinsei do |af| %>
                       <tr>
-                        <td><%= l(sinsei.month, format: :short) %></td>
+                        <td><%= sinsei.month.month %></td>
                         <td><%= af.select :mark, [['なし', 0], ['申請中', 1], ['承認', 2], ['否認', 3]], { include_blank: true, selected: sinsei.mark } %></td>
                         <td><%= af.check_box :check %></td>
                         <td><%= link_to "確認する", user_path(sinsei.user_id, date:sinsei.month), class: "btn btn-lg btn-primary" %></td>
